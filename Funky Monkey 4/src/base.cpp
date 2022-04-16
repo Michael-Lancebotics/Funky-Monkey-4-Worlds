@@ -150,7 +150,7 @@ void Base::driveToPoint(double itargetX, double itargetY, double maxErrorX, bool
     printConsole(pwrY);
     // if(duration > 1000 && safety && odom.getYVel() == 0 && odom.getXVel() == 0 && odom.getAVel() == 0) return;
 
-    // if(pickupMOGOFourBar && frontFourBar.claw.hasMogo()){
+    // if(pickupMOGOFourBar && fourBar.claw.hasMogo()){
       // motorControl.fourBarGrab();
       // pros::delay(100);
       // break;
@@ -237,7 +237,7 @@ void Base::driveToDistance(double targetDistance, double itargetA, double maxErr
     printConsole(pwrY);
     // if(duration > 1000 && safety && odom.getYVel() == 0 && odom.getXVel() == 0 && odom.getAVel() == 0) return;
 
-    // if(pickupMOGOFourBar && frontFourBar.claw.hasMogo()){
+    // if(pickupMOGOFourBar && fourBar.claw.hasMogo()){
       // motorControl.fourBarGrab();
       // pros::delay(100);
       // break;
@@ -389,7 +389,7 @@ void Base::driveToMogo(double mogoX, double mogoY, bool front, double itargetX, 
   unsigned long now = pros::millis();
   unsigned long duration = now - start;
 
-  int mogosDetected = front ? frontFourBar.claw.mogoAligned(mogoX, mogoY, front) : transmission.fourBar.claw.mogoAligned(mogoX, mogoY, front);
+  // int mogosDetected = front ? fourBar.claw.mogoAligned(mogoX, mogoY, front) : transmission.fourBar.claw.mogoAligned(mogoX, mogoY, front);
 
   while(fabs(errorY) > 0.5 && (!controller.getPress(X) || controller.getInAutonomous()) && duration < 7000){
     //update errors
@@ -403,19 +403,19 @@ void Base::driveToMogo(double mogoX, double mogoY, bool front, double itargetX, 
     errorX = totalError * sin(errorAngle);
     errorY = totalError * cos(errorAngle);
 
-    mogosDetected = front ? frontFourBar.claw.mogoAligned(mogoX, mogoY, front) : transmission.fourBar.claw.mogoAligned(mogoX, mogoY, front);
+    // mogosDetected = front ? fourBar.claw.mogoAligned(mogoX, mogoY, front) : transmission.fourBar.claw.mogoAligned(mogoX, mogoY, front);
 
-    if(mogosDetected == 2){
-      pwrA = 0;
-    }
-    else if(mogosDetected == 0){
-      if(fabs(errorX) > maxErrorX){
-        pwrA = findCorrection(errorX, maxSpeed, minSpeed);
-      }
-    }
-    else{
-      pwrA = 20 * mogosDetected;
-    }
+    // if(mogosDetected == 2){
+    //   pwrA = 0;
+    // }
+    // else if(mogosDetected == 0){
+    //   if(fabs(errorX) > maxErrorX){
+    //     pwrA = findCorrection(errorX, maxSpeed, minSpeed);
+    //   }
+    // }
+    // else{
+    //   pwrA = 20 * mogosDetected;
+    // }
 
     pwrY = pwrY*sgn(cos(errorAngle)) * -boolToSgn(reverse);
 
@@ -430,16 +430,16 @@ void Base::driveToMogo(double mogoX, double mogoY, bool front, double itargetX, 
 
     // if(duration > 1000 && safety && odom.getYVel() == 0 && odom.getXVel() == 0 && odom.getAVel() == 0) return;
 
-    if(front && frontFourBar.claw.hasMogo()){
-      frontFourBar.claw.close();
+    if(front && fourBar.claw.hasMogo()){
+      fourBar.claw.close();
       pros::delay(100);
       break;
     }
-    else if(!front && transmission.fourBar.claw.hasMogo()){
-      transmission.fourBar.claw.close();
-      pros::delay(100);
-      break;
-    }
+    // else if(!front && transmission.fourBar.claw.hasMogo()){
+    //   transmission.fourBar.claw.close();
+    //   pros::delay(100);
+    //   break;
+    // }
 
     setDrive(pwrY, pwrA);
 

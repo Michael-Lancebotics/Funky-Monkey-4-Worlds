@@ -2,16 +2,17 @@
 #include "autonomous.hpp"
 #include "driveControl.hpp"
 #include "main.h"
-#include "odometry.hpp"
 #include "output.hpp"
 #include "util.hpp"
 #include "controller.hpp"
+#include "rollers.hpp"
 
 #define DELAY_TIME 20
 
 extern Base base;
-extern FourBar frontFourBar;
-extern Transmission transmission;
+extern FourBar fourBar;
+extern Claw twoBar;
+extern Rollers rollers;
 extern DriveControl driveControl;
 extern Auton auton;
 extern Odometry odom;

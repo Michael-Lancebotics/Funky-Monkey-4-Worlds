@@ -1,7 +1,7 @@
 #include "main.h"
 #include "inertial.hpp"
 #include "trackingWheel.hpp"
-#include "transmission.hpp"
+#include "fourBar.hpp"
 
 class Odometry{
 private:
@@ -19,6 +19,8 @@ private:
   Distance right;
   Distance frontLeft;
   Distance frontRight;
+  Distance backLeft;
+  Distance backRight;
 
   pros::Task *updateTask = nullptr;
   pros::Task *distanceFilterTask = nullptr;
@@ -26,7 +28,7 @@ private:
 public:
   Inertial inertial;
 
-  Odometry(TrackingWheel ixWheel, TrackingWheel iyWheel, Inertial iinertial, Distance ileft, Distance iright, Distance ifrontLeft, Distance ifrontRight){
+  Odometry(TrackingWheel ixWheel, TrackingWheel iyWheel, Inertial iinertial, Distance ileft, Distance iright, Distance ifrontLeft, Distance ifrontRight, Distance ibackLeft, Distance ibackRight){
     xWheel = ixWheel;
     yWheel = iyWheel;
     inertial = iinertial;
@@ -34,6 +36,8 @@ public:
     right = iright;
     frontLeft = ifrontLeft;
     frontRight = ifrontRight;
+    backLeft = ibackLeft;
+    backRight = ibackRight;
   }
 
   double getX(){

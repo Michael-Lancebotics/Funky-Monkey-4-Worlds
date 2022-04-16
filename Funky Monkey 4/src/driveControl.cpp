@@ -4,8 +4,8 @@ void DriveControl::start(){
   baseTask = new pros::Task(baseController);
   fourBarTask = new pros::Task(fourBarController);
   fourBarManagerTask = new pros::Task(fourBarManager);
-  transmissionTask = new pros::Task(transmissionController);
-  transmissionManagerTask = new pros::Task(transmissionManager);
+  twoBarTask = new pros::Task(twoBarController);
+  rollerTask = new pros::Task(rollerController);
 }
 
 void DriveControl::stop(){
@@ -24,15 +24,15 @@ void DriveControl::stop(){
     delete fourBarManagerTask;
     fourBarManagerTask = nullptr;
   }
-  if(transmissionTask != nullptr){
-    transmissionTask->remove();
-    delete transmissionTask;
-    transmissionTask = nullptr;
+  if(twoBarTask != nullptr){
+    twoBarTask->remove();
+    delete twoBarTask;
+    twoBarTask = nullptr;
   }
-  if(transmissionManagerTask != nullptr){
-    transmissionManagerTask->remove();
-    delete transmissionManagerTask;
-    transmissionManagerTask = nullptr;
+  if(rollerTask != nullptr){
+    rollerTask->remove();
+    delete rollerTask;
+    rollerTask = nullptr;
   }
 }
 
@@ -72,77 +72,42 @@ void DriveControl::baseController(){
 void DriveControl::fourBarManager(){
   while(true){
     if(controller.getNewPress(R1)){
-      if(frontFourBar.getState() == LiftTargets::down){
-        frontFourBar.setState(LiftTargets::hover);
+      if(fourBar.getState() == LiftTargets::down){
+        fourBar.setState(LiftTargets::hover);
         printBrainText(6, "hover");
       }
-      else if(frontFourBar.getState() == LiftTargets::hover || frontFourBar.getState() == LiftTargets::platform){
-        frontFourBar.setState(LiftTargets::score);
+      else if(fourBar.getState() == LiftTargets::hover || fourBar.getState() == LiftTargets::platform){
+        fourBar.setState(LiftTargets::score);
         printBrainText(6, "score");
       }
     }
     else if(controller.getNewPress(R2)){
-      if(frontFourBar.getState() == LiftTargets::score){
-        frontFourBar.setState(LiftTargets::platform);
+      if(fourBar.getState() == LiftTargets::score){
+        fourBar.setState(LiftTargets::platform);
         printBrainText(6, "platform");
       }
-      else if(frontFourBar.getState() == LiftTargets::platform || frontFourBar.getState() == LiftTargets::hover){
-        frontFourBar.setState(LiftTargets::down);
+      else if(fourBar.getState() == LiftTargets::platform || fourBar.getState() == LiftTargets::hover){
+        fourBar.setState(LiftTargets::down);
         printBrainText(6, "down");
       }
     }
     if(controller.getNewPress(A)){
-      frontFourBar.claw.switchState();
+      fourBar.claw.switchState();
     }
     pros::delay(DELAY_TIME);
   }
 }
 
 void DriveControl::fourBarController(){
-  frontFourBar.run();
+  fourBar.run();
 }
 
-void DriveControl::transmissionController(){
-  transmission.run();
-}
-
-void DriveControl::transmissionManager(){
-  transmission.fourBar.setPosition(0);
+void DriveControl::twoBarController(){
   while(true){
-    if(transmission.ringable()){
-      printBrainText(5, "rollers");
-      if(transmission.getState() != TransmissionState::rollers)transmission.setState(TransmissionState::rollers);
-      transmission.fourBar.setState(LiftTargets::down);
-      if(controller.getNewPress(L1)){
-        transmission.fourBar.setState(LiftTargets::hover);
-      }
-      transmission.fourBar.setPosition(0);
-    }
-    else{
-      printBrainText(5, "fourBar");
-      if(transmission.getState() != TransmissionState::fourBar)transmission.setState(TransmissionState::fourBar);
-      if(controller.getNewPress(L1)){
-        if(transmission.fourBar.getState() == LiftTargets::down){
-          transmission.fourBar.setState(LiftTargets::hover);
-        }
-        else if(transmission.fourBar.getState() == LiftTargets::hover || transmission.fourBar.getState() == LiftTargets::platform){
-          transmission.fourBar.setState(LiftTargets::score);
-        }
-      }
-      else if(controller.getNewPress(L2)){
-        if(transmission.fourBar.getState() == LiftTargets::score){
-          transmission.fourBar.setState(LiftTargets::platform);
-        }
-        else if(transmission.fourBar.getState() == LiftTargets::platform || transmission.fourBar.getState() == LiftTargets::hover){
-          transmission.fourBar.setState(LiftTargets::down);
-        }
-      }
-    }
-    printBrainText(4, "here");
-    if(controller.getNewPress(B)){
-      printBrainText(5, "here");
-      transmission.fourBar.claw.switchState();
-    }
-    pros::delay(DELAY_TIME);
+    
   }
+}
+
+void DriveControl::rollerController(){
+  // fourBar.run();
 }

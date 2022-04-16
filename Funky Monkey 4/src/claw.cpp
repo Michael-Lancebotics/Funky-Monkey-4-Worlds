@@ -1,7 +1,7 @@
 #include "robot.hpp"
 
 bool Claw::hasMogo(){
-  return (leftDistance.getDistance() < 40 && leftDistance.getDistance() != 0) && (rightDistance.getDistance() < 40 && leftDistance.getDistance() != 0);
+  return (distance.getDistance() < 40) && (distance.getDistance() != 0);
 }
 
 void Claw::open(){
@@ -16,26 +16,22 @@ void Claw::switchState(){
   piston.switchState();
 }
 
+int Claw::getDistance(){
+  return distance.getDistance();
+}
+
 int Claw::getAverageDistance(){
-  return (leftDistance.getDistance() + rightDistance.getDistance()) / 2;
+  return (leftAlignerDistance.getDistance() + rightAlignerDistance.getDistance()) / 2;
 }
 
-double Claw::getExpectedDistance(double mogoX, double mogoY, bool front){
-  double localYOffset = front ? 1.5 : 1.5;
-  return findDist(odom.getX() + (localYOffset * sin(odom.getA())), odom.getY() + (localYOffset * cos(odom.getA())), mogoX, mogoY);
+double Claw::getExpectedDistance(double mogoX, double mogoY){
+  return findDist(odom.getX() + (localYAlignerOffset * sin(odom.getA())), odom.getY() + (localYAlignerOffset * cos(odom.getA())), mogoX, mogoY);
 }
 
-int Claw::mogoAligned(double mogoX, double mogoY, bool front){
-  double expected = getExpectedDistance(mogoX, mogoY, front);
-  bool left = fabs(milimetersToInches(leftDistance.getDistance()) - expected) < 5;
-  bool right = fabs(milimetersToInches(rightDistance.getDistance()) - expected) < 5;
-  double leftTemp = milimetersToInches(leftDistance.getDistance());
-  double rightTemp = milimetersToInches(rightDistance.getDistance());
-  printConsole(expected);
-  printConsole(left);
-  printConsole(right);
-  printConsole(leftTemp);
-  printConsole(rightTemp);
+int Claw::mogoAligned(double mogoX, double mogoY){
+  double expected = getExpectedDistance(mogoX, mogoY);
+  bool left = fabs(milimetersToInches(leftAlignerDistance.getDistance()) - expected) < 5;
+  bool right = fabs(milimetersToInches(rightAlignerDistance.getDistance()) - expected) < 5;
   if(left && right){
     return 2;
   }
