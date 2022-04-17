@@ -28,6 +28,14 @@ void Base::brake(){
   }
 }
 
+double Base::getVelocity(){
+  double vel = 0;
+  for(int i = 0; i < 3; i++){
+    vel += leftMotors[i].getActualSpeed();
+    vel += rightMotors[i].getActualSpeed();
+  }
+  return vel / 6;
+}
 
 void Base::arcToPoint(double itargetX, double itargetY, double itargetA, double maxErrorRadius, bool reverse, int iminSpeed, int imaxSpeed, bool accelerate, bool decelerate){
   targetX = itargetX;
@@ -135,6 +143,8 @@ void Base::driveToPoint(double itargetX, double itargetY, double maxErrorX, bool
     else{
       pwrA = 0;
     }
+    printConsole(errorX);
+    printConsole(radToDeg(odom.getA()));
 
     pwrY = pwrY*sgn(cos(errorAngle)) * -boolToSgn(reverse);
 
@@ -148,6 +158,7 @@ void Base::driveToPoint(double itargetX, double itargetY, double maxErrorX, bool
     }
 
     printConsole(pwrY);
+    printConsole(pwrA);
     // if(duration > 1000 && safety && odom.getYVel() == 0 && odom.getXVel() == 0 && odom.getAVel() == 0) return;
 
     // if(pickupMOGOFourBar && fourBar.claw.hasMogo()){
@@ -157,20 +168,22 @@ void Base::driveToPoint(double itargetX, double itargetY, double maxErrorX, bool
     // }
     // pwrY = 20;
     localYVel = odom.getXVel() * sin(odom.getA()) + odom.getYVel() * cos(odom.getA());
-    printConsole(localYVel);
+    // printConsole(localYVel);
 
     setDrive(pwrY, pwrA);
 
     now = pros::millis();
     duration = now - start;
 
+    printConsole(getVelocity());
+    printConsole(duration);
     pros::delay(DELAY_TIME);
   }
   // if(odom.getXVel() * sin(odom.getA()) + odom.getYVel() * cos(odom.getA()) > 20){
-    while(localYVel > 0){
+    while(localYVel*-boolToSgn(reverse) > 0){
       localYVel = odom.getXVel() * sin(odom.getA()) + odom.getYVel() * cos(odom.getA());
       setDrive(-10 * -boolToSgn(reverse), 0);
-      pros::delay(DELAY_TIME);
+      pros::delay(1);
     }
   // }
   // else{
@@ -179,6 +192,8 @@ void Base::driveToPoint(double itargetX, double itargetY, double maxErrorX, bool
   //     pros::delay(DELAY_TIME);
   //   }
   // }
+  now = pros::millis();
+  duration = now - start;
   setDrive(0, 0);
   printConsole(duration);
 }
@@ -332,13 +347,13 @@ void Base::turnToAngle(double itargetA, bool reverse, int minSpeed, int maxSpeed
 }
 
 double Base::findPwrY(double error, double initialError, int maxSpeed, int minSpeed, bool accel, bool decel){
-  double accelSlope = 0.0000001;
+  // double accelSlope = 0.0000001;
   double decelSlope = 13.75;
   // if(accel && decel){
     // return setMin(setMax(fabs(127*(tanh(error/decelSlope))-127*tanh((error-initialError)/accelSlope)-127), maxSpeed), minSpeed);
   // }
   // if(accel){
-    return setMin(setMax(fabs(127*(tanh(error/decelSlope))), maxSpeed), minSpeed);
+    return setMin(setMax(fabs(130*(tanh(error/decelSlope))), maxSpeed), minSpeed);
 
   // }
   // if(decel){
@@ -368,7 +383,7 @@ double Base::findCorrection(double error, int maxSpeed, int minSpeed){
   double kI = 0;
   double kD = 0;
   double pwr = error * kP;
-  return setMin(pwr, 20);
+  return sgn(pwr)*setMin(fabs(pwr), 20);
 }
 
 void Base::driveToMogo(double mogoX, double mogoY, bool front, double itargetX, double itargetY, double maxErrorX, bool reverse, int minSpeed, int maxSpeed, bool accelerate, bool decelerate){

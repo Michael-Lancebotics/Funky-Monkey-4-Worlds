@@ -20,15 +20,15 @@ public:
     return port;
   }
 
-  int getRawRotation(){
+  double getRawRotation(){
     return pros::IMU(port).get_rotation();
   }
 
-  int getRawPitch(){
+  double getRawPitch(){
     return pros::IMU(port).get_pitch();
   }
 
-  int getRawRoll(){
+  double getRawRoll(){
     return pros::IMU(port).get_roll();
   }
 

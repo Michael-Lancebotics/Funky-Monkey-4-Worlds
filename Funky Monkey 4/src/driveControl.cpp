@@ -43,7 +43,6 @@ void DriveControl::baseController(){
   double totalPwr = 0;
   bool coast = true;
   while(true){
-
     pwrY = controller.getJoystick(LY);
     pwrA = controller.getJoystick(RX);
 
@@ -104,10 +103,37 @@ void DriveControl::fourBarController(){
 
 void DriveControl::twoBarController(){
   while(true){
-    
+    if(controller.getPress(L1)){
+      printBrainText(0, "close");
+      twoBar.close();
+    }
+    else if(controller.getPress(L2)){
+      printBrainText(0, "open");
+      twoBar.open();
+    }
+    pros::delay(DELAY_TIME);
   }
 }
 
 void DriveControl::rollerController(){
-  // fourBar.run();
+int stuckTime = 0;
+while(true){
+    if(twoBar.getState() == PistonState::extend && twoBar.hasMogo()){//FourBarRotation.get_position() > -20400 &&
+      rollers.move(127);
+      if(abs(rollers.getActualSpeed()) < 10){
+        stuckTime += 1;
+        if(stuckTime == 10){
+          rollers.move(-127);
+          pros::delay(500);
+        }
+      }
+      else{
+        stuckTime = 0;
+      }
+    }
+    else{
+      rollers.move(0);
+    }
+    pros::delay(DELAY_TIME);
+  }
 }

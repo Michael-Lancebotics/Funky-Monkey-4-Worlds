@@ -15,7 +15,8 @@ void competition_initialize(){}
 
 void autonomous(){
 	// auton.start();
-	base.driveToPoint(0, 24, 1);
+	// odom.reset(0, 0, 180);
+	base.driveToPoint(0, -10, 0.5, true);
 	pros::delay(500);
 	printConsole(odom.getX());
 	printConsole(odom.getY());

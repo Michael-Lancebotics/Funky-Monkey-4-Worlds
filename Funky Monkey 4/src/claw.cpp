@@ -5,7 +5,7 @@ bool Claw::hasMogo(){
 }
 
 void Claw::open(){
-  piston.extend();
+  piston.retract();
 }
 
 void Claw::close(){
