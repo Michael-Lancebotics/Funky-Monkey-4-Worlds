@@ -1,7 +1,7 @@
 #include "robot.hpp"
 
 bool Claw::hasMogo(){
-  return (distance.getDistance() < 40) && (distance.getDistance() != 0);
+  return (distance.getDistance() < grabDistance) && (distance.getDistance() != 0);
 }
 
 void Claw::open(){

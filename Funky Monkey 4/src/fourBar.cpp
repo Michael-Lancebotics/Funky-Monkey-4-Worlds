@@ -9,7 +9,7 @@ void FourBar::run(){
   double kP = 0.03 + (sgnToBool(sgn(error)) ? (claw.hasMogo() ? 0.05 : 0) : (claw.hasMogo() ? -0.02 : -0.01));
   int pwr = 0;
   while(true){
-    error = static_cast<int>(getTarget()) - getPosition();
+    error = static_cast<int>(getState()) - getPosition();
     if(abs(error) > 1000){
       kP = 0.03 + (sgnToBool(sgn(error)) ? (claw.hasMogo() ? 0.05 : 0) : (claw.hasMogo() ? -0.02 : -0.01));
       pwr = error*kP;

@@ -3,17 +3,7 @@
 #include "rotation.hpp"
 #include "claw.hpp"
 
-#define FRONT_FOUR_BAR_DOWN -35859
-#define FRONT_FOUR_BAR_HOVER -24407
-#define FRONT_FOUR_BAR_PLATFORM -5633
-#define FRONT_FOUR_BAR_SCORE 20171
-
-#define BACK_FOUR_BAR_DOWN 0
-#define BACK_FOUR_BAR_HOVER 10000
-#define BACK_FOUR_BAR_PLATFORM 27000
-#define BACK_FOUR_BAR_SCORE 47000
-
-enum class LiftTargets{ down, hover, platform, score };
+enum class LiftTargets{ down = -35859, hover = -24407, platform = -5633, score = 20171};
 
 class FourBar{
 private:
@@ -21,35 +11,22 @@ private:
   Motor motor;
   Rotation rotation;
   LiftTargets target;
-  int targets[4];
 
 public:
   FourBar(){}
-  FourBar(Motor imotor, Claw iclaw, Rotation irotation, int idown, int ihover, int iplatform, int iscore){
+  FourBar(Motor imotor, Claw iclaw, Rotation irotation){
     motor = imotor;
     rotation = irotation;
     claw = iclaw;
-    targets[0] = idown;
-    targets[1] = ihover;
-    targets[2] = iplatform;
-    targets[3] = iscore;
   }
 
   void equals(const FourBar &other){
     motor = other.motor;
     rotation = other.rotation;
     claw = other.claw;
-    targets[0] = other.targets[0];
-    targets[1] = other.targets[1];
-    targets[2] = other.targets[2];
-    targets[3] = other.targets[3];
   }
 
   Claw claw;
-
-  int getTarget(){
-    return targets[static_cast<int>(target)];
-  }
 
   LiftTargets getState(){
     return target;

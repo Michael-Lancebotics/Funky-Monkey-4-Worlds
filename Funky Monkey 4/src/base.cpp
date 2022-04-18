@@ -513,12 +513,12 @@ void Base::driveToMogo(double mogoX, double mogoY, bool correct, double itargetX
 
     if(!reverse && fourBar.claw.hasMogo()){
       fourBar.claw.close();
-      // pros::delay(100);
+      pros::delay(50);
       break;
     }
     else if(reverse && twoBar.hasMogo()){
       twoBar.close();
-      // pros::delay(100);
+      pros::delay(50);
       break;
     }
 
