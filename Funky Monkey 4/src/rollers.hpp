@@ -4,7 +4,6 @@
 class Rollers{
 private:
   Motor motor;
-  bool run;
   int presetSpeed;
 
 public:
@@ -34,5 +33,5 @@ public:
   }
 
   void move(int ispeed);
-  void smartMove();
+  void run();
 };

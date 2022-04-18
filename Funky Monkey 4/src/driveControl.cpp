@@ -116,8 +116,8 @@ void DriveControl::twoBarController(){
 }
 
 void DriveControl::rollerController(){
-int stuckTime = 0;
-while(true){
+  int stuckTime = 0;
+  while(true){
     if(twoBar.getState() == PistonState::extend && twoBar.hasMogo()){//FourBarRotation.get_position() > -20400 &&
       rollers.move(127);
       if(abs(rollers.getActualSpeed()) < 10){

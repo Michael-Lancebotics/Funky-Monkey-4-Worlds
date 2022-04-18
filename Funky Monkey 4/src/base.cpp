@@ -48,6 +48,7 @@ void Base::arcToPoint(double itargetX, double itargetY, double itargetA, double 
   double radius = (cordLength/2) / (sin((targetA - odom.getA()) / 2));
   double centreX = radius * sin(odom.getA() + degToRad(90)*-boolToSgn(reverse));
   double centreY = radius * cos(odom.getA() + degToRad(90)*-boolToSgn(reverse));
+  double initialRadiusToInitialCentre = findDist(odom.getX(), odom.getY(), centreX, centreY);
   double radiusToInitialCentre = findDist(odom.getX(), odom.getY(), centreX, centreY);
   double innerRadius = radius - BASE_WIDTH/2;
   double outterRadius = radius + BASE_WIDTH/2;
@@ -83,16 +84,30 @@ void Base::arcToPoint(double itargetX, double itargetY, double itargetA, double 
     pwrY = pwrY = findPwrY(cordLength, totalErrorInitial, imaxSpeed, iminSpeed, accelerate, decelerate)*-boolToSgn(reverse);
     pwrA = (((pwrY * outterRatio) - (pwrY * innerRatio)))*-boolToSgn(reverse);
 
-    errorRadius = radiusToInitialCentre - radius;
+    errorRadius = initialRadiusToInitialCentre - radiusToInitialCentre;
 
-    if(errorRadius > maxErrorRadius){
-      radiusCorrection = setMin(errorRadius * 3, 20);
+    if(fabs(errorRadius) > maxErrorRadius){
+      radiusCorrection = sgn(errorRadius)*setMin(fabs(errorRadius) * 3, 20);
     }
     else{
       radiusCorrection = 0;
     }
 
-    pwrA += radiusCorrection*sgn(pwrA);
+    printConsole(radiusCorrection);
+    printConsole(centreX);
+    printConsole(centreY);
+    printConsole(radiusToInitialCentre);
+    printConsole(errorRadius);
+    printConsole(radius);
+    printConsole(odom.getX());
+    printConsole(odom.getY());
+    printConsole(radToDeg(odom.getA()));
+    printConsole(pwrY);
+    printConsole(pwrA);
+
+    // pwrA += radiusCorrection;//*-sgn(pwrA)
+
+    printConsole(pwrA);
 
     errorAngle = angleInRange(targetA - odom.getA());
     setDrive(pwrY, pwrA);
@@ -296,23 +311,36 @@ void Base::turnToPoint(double itargetX, double itargetY, bool reverse, int minSp
   unsigned long now = pros::millis();
   unsigned long duration = now - start;
 
+  double initError = radToDeg(errorAngle);
 
   while(fabs(errorAngle) > degToRad(1) && (!controller.getPress(X) || controller.getInAutonomous()) && duration < 3000){
     errorAngle = angleInRange(findAngle(odom.getX(), odom.getY(), targetX, targetY) - odom.getA() + (reverse ? M_PI : 0));
 
-    pwrA = findPwrA(errorAngle, maxSpeed, minSpeed);
+    pwrA = findPwrA(errorAngle, maxSpeed, minSpeed, initError)*sgn(errorAngle);
 
+    printConsole(radToDeg(errorAngle));
+    printConsole(pwrA);
     setDrive(0, pwrA);
+    printConsole(getActualPwrA());
 
     now = pros::millis();
     duration = now - start;
+    printConsole(duration);
 
     // if(duration > 1000 && odom.endTarget.getSafety() && velocity.getYVelocity() == 0 && velocity.getXVelocity() == 0 && velocity.getAngleVelocity() == 0) return;
 
     pros::delay(DELAY_TIME);
   }
+  // while(odom.getAVel() * -boolToSgn(reverse) > 0){
+  //   setDrive(0,-10 * -boolToSgn(reverse));
+  //   pros::delay(DELAY_TIME);
+  // }
   //stopping the drive
   setDrive(0, 0);
+  now = pros::millis();
+  duration = now - start;
+  printConsole(duration);
+
 }
 
 //drives to point in main task
@@ -326,24 +354,34 @@ void Base::turnToAngle(double itargetA, bool reverse, int minSpeed, int maxSpeed
   unsigned long now = pros::millis();
   unsigned long duration = now - start;
 
+  double initError = radToDeg(errorAngle);
 
   while(fabs(errorAngle) > degToRad(1) && (!controller.getPress(X) || controller.getInAutonomous()) && duration < 3000){
     errorAngle = angleInRange(targetA - odom.getA() + (reverse ? M_PI : 0));
+    pwrA = findPwrA(errorAngle, maxSpeed, minSpeed, initError)*sgn(errorAngle);
 
-    pwrA = findPwrA(errorAngle, maxSpeed, minSpeed);
-
+    printConsole(radToDeg(errorAngle));
+    printConsole(pwrA);
     setDrive(0, pwrA);
+    printConsole(getActualPwrA());
 
     now = pros::millis();
     duration = now - start;
+    printConsole(duration);
 
     // if(duration > 1000 && odom.endTarget.getSafety() && velocity.getYVelocity() == 0 && velocity.getXVelocity() == 0 && velocity.getAngleVelocity() == 0) return;
 
     pros::delay(DELAY_TIME);
   }
+  // while(odom.getAVel() * -boolToSgn(reverse) > 0){
+  //   setDrive(0,-10 * -boolToSgn(reverse));
+  //   pros::delay(DELAY_TIME);
+  // }
   //stopping the drive
-  printBrain(4, odom.getA());
   setDrive(0, 0);
+  now = pros::millis();
+  duration = now - start;
+  printConsole(duration);
 }
 
 double Base::findPwrY(double error, double initialError, int maxSpeed, int minSpeed, bool accel, bool decel){
@@ -362,20 +400,43 @@ double Base::findPwrY(double error, double initialError, int maxSpeed, int minSp
   // return maxSpeed;
 }
 
-double Base::findPwrA(double errorAngle, int maxSpeed, int minSpeed){
+double Base::findPwrA(double errorAngle, int maxSpeed, int minSpeed, double initError){
   double kP = 80;
   double kI = 0;
   double kD = 0;
-  // double speed = map_set(fabs(errorAngle),degToRad(0.5), M_PI,30.0*sgn(errorAngle),127.0*sgn(errorAngle),
-  //                   degToRad(5), sgn(errorAngle)*10.0,
-  //                   degToRad(10), sgn(errorAngle)*15.0,
-  //                   degToRad(20),sgn(errorAngle)*30.0,
-  //                   degToRad(45),sgn(errorAngle)*40.0,
-  //                   degToRad(60), sgn(errorAngle)*50.0,
-  //                   degToRad(90),sgn(errorAngle)*80.0,
-  //                   M_PI,sgn(errorAngle)*127.0);
-  // return sgn(errorAngle)*setMax(setMin(fabs(speed), minSpeed), maxSpeed);
-  return 50;
+  int profile = round(initError/10)*10;
+  printConsole(initError);
+  printConsole(profile);
+  if(radToDeg(fabs(errorAngle)) > 90){
+    return 127;
+  }
+  else if(radToDeg(fabs(errorAngle)) > 80){
+    return 127;
+  }
+  else if(radToDeg(fabs(errorAngle)) > 70){
+    return 127;
+  }
+  else if(radToDeg(fabs(errorAngle)) > 60){
+    return 127;
+  }
+  else if(radToDeg(fabs(errorAngle)) > 50){
+    return profile <= 70 ? 100 : 80;
+  }
+  else if(radToDeg(fabs(errorAngle)) > 40){
+    return profile <= 50 ? 80 : 40;
+  }
+  else if(radToDeg(fabs(errorAngle)) > 30){
+    return profile == 80 ? 40 : profile <= 70 ? 40 : 30;
+  }
+  else if(radToDeg(fabs(errorAngle)) > 20){
+    return profile <= 80 && profile >= 60 ? 40 : profile == 50 ? 30 : profile <= 40 ? 45 : 20;
+  }
+  else if(radToDeg(fabs(errorAngle)) > 10){
+    return 20;
+  }
+  else{
+    return 20;
+  }
 }
 
 double Base::findCorrection(double error, int maxSpeed, int minSpeed){
@@ -386,7 +447,7 @@ double Base::findCorrection(double error, int maxSpeed, int minSpeed){
   return sgn(pwr)*setMin(fabs(pwr), 20);
 }
 
-void Base::driveToMogo(double mogoX, double mogoY, bool front, double itargetX, double itargetY, double maxErrorX, bool reverse, int minSpeed, int maxSpeed, bool accelerate, bool decelerate){
+void Base::driveToMogo(double mogoX, double mogoY, bool correct, double itargetX, double itargetY, double maxErrorX, bool reverse, int minSpeed, int maxSpeed, bool accelerate, bool decelerate){
   targetX = itargetX;
   targetY = itargetY;
   double totalErrorInitial = findDist(odom.getX(), odom.getY(), targetX, targetY);
@@ -404,7 +465,7 @@ void Base::driveToMogo(double mogoX, double mogoY, bool front, double itargetX, 
   unsigned long now = pros::millis();
   unsigned long duration = now - start;
 
-  // int mogosDetected = front ? fourBar.claw.mogoAligned(mogoX, mogoY, front) : transmission.fourBar.claw.mogoAligned(mogoX, mogoY, front);
+  int mogosDetected = reverse ? twoBar.mogoAligned(mogoX, mogoY) : fourBar.claw.mogoAligned(mogoX, mogoY);
 
   while(fabs(errorY) > 0.5 && (!controller.getPress(X) || controller.getInAutonomous()) && duration < 7000){
     //update errors
@@ -418,19 +479,26 @@ void Base::driveToMogo(double mogoX, double mogoY, bool front, double itargetX, 
     errorX = totalError * sin(errorAngle);
     errorY = totalError * cos(errorAngle);
 
-    // mogosDetected = front ? fourBar.claw.mogoAligned(mogoX, mogoY, front) : transmission.fourBar.claw.mogoAligned(mogoX, mogoY, front);
+    mogosDetected = reverse ? twoBar.mogoAligned(mogoX, mogoY) : fourBar.claw.mogoAligned(mogoX, mogoY);
 
-    // if(mogosDetected == 2){
-    //   pwrA = 0;
-    // }
-    // else if(mogosDetected == 0){
-    //   if(fabs(errorX) > maxErrorX){
-    //     pwrA = findCorrection(errorX, maxSpeed, minSpeed);
-    //   }
-    // }
-    // else{
-    //   pwrA = 20 * mogosDetected;
-    // }
+    if(correct){
+      if(mogosDetected == 2){
+        pwrA = 0;
+      }
+      else if(mogosDetected == 0){
+        if(fabs(errorX) > maxErrorX){
+          pwrA = findCorrection(errorX, maxSpeed, minSpeed);
+        }
+      }
+      else{
+        pwrA = 20 * mogosDetected;
+      }
+    }
+    else{
+      if(fabs(errorX) > maxErrorX){
+        pwrA = findCorrection(errorX, maxSpeed, minSpeed);
+      }
+    }
 
     pwrY = pwrY*sgn(cos(errorAngle)) * -boolToSgn(reverse);
 
@@ -443,18 +511,16 @@ void Base::driveToMogo(double mogoX, double mogoY, bool front, double itargetX, 
       pwrA = (pwrA / totalPwr) * 127;
     }
 
-    // if(duration > 1000 && safety && odom.getYVel() == 0 && odom.getXVel() == 0 && odom.getAVel() == 0) return;
-
-    if(front && fourBar.claw.hasMogo()){
+    if(!reverse && fourBar.claw.hasMogo()){
       fourBar.claw.close();
-      pros::delay(100);
+      // pros::delay(100);
       break;
     }
-    // else if(!front && transmission.fourBar.claw.hasMogo()){
-    //   transmission.fourBar.claw.close();
-    //   pros::delay(100);
-    //   break;
-    // }
+    else if(reverse && twoBar.hasMogo()){
+      twoBar.close();
+      // pros::delay(100);
+      break;
+    }
 
     setDrive(pwrY, pwrA);
 
@@ -464,6 +530,14 @@ void Base::driveToMogo(double mogoX, double mogoY, bool front, double itargetX, 
     pros::delay(DELAY_TIME);
   }
   //stopping the drive
-  pros::delay(50);
   setDrive(0, 0);
+}
+
+double Base::getActualPwrA(){
+  double pwrA = 0;
+  for(int i = 0; i < 3; i++){
+    pwrA += leftMotors[i].getActualSpeed();
+    pwrA -= rightMotors[i].getActualSpeed();
+  }
+  return pwrA/3;
 }

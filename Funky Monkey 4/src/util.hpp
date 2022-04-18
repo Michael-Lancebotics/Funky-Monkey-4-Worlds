@@ -20,9 +20,5 @@ bool sgnToBool(int sgn);
 double setMax(double num, const double& limit);
 double setMin(double num, const double& limit);
 
-//finding motor velocities
-double getActualPwrY();
-double getActualPwrA();
-
 double inchesToMilimeters(double inches);
 double milimetersToInches(double mm);

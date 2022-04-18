@@ -1,7 +1,7 @@
 #include "main.h"
 #include "odometry.hpp"
 
-#define BASE_WIDTH 10
+#define BASE_WIDTH 11.75
 
 class Base{
  private:
@@ -45,7 +45,7 @@ class Base{
   }
 
   double findPwrY(double error, double initialError, int maxSpeed, int minSpeed, bool accel, bool decel);
-  double findPwrA(double errorAngle, int maxSpeed, int minSpeed);
+  double findPwrA(double errorAngle, int maxSpeed, int minSpeed, double initError);
   double findCorrection(double error, int maxSpeed, int minSpeed);
   double getVelocity();
   void setDrive(int pwrY, int pwrA);
@@ -54,8 +54,10 @@ class Base{
   void arcToPoint(double itargetX, double itargetY, double itargetA, double maxErrorRadius = 1, bool reverse = false, int iminSpeed = 20, int imaxSpeed = 127, bool accelerate = true, bool decelerate = true);
   void turnToPoint(double itargetX, double itargetY, bool reverse = false, int minSpeed = 20, int maxSpeed = 127, bool accelerate = true, bool decelerate = true);
   void turnToAngle(double targetA, bool reverse = false, int minSpeed = 20, int maxSpeed = 127, bool accelerate = true, bool decelerate = true);
-  void driveToMogo(double mogoX, double mogoY, bool front, double itargetX, double itargetY, double maxErrorX = 1, bool reverse = false, int minSpeed = 20, int maxSpeed = 127, bool accelerate = true, bool decelerate = true);
+  void driveToMogo(double mogoX, double mogoY, bool correct, double itargetX, double itargetY, double maxErrorX = 1, bool reverse = false, int minSpeed = 20, int maxSpeed = 127, bool accelerate = true, bool decelerate = true);
   void hold();
   void coast();
   void brake();
+  double getActualPwrY();
+  double getActualPwrA();
 };

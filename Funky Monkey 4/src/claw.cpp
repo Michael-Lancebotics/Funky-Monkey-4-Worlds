@@ -30,8 +30,13 @@ double Claw::getExpectedDistance(double mogoX, double mogoY){
 
 int Claw::mogoAligned(double mogoX, double mogoY){
   double expected = getExpectedDistance(mogoX, mogoY);
-  bool left = fabs(milimetersToInches(leftAlignerDistance.getDistance()) - expected) < 5;
-  bool right = fabs(milimetersToInches(rightAlignerDistance.getDistance()) - expected) < 5;
+  bool left = (fabs(milimetersToInches(leftAlignerDistance.getDistance()) - expected + 5) < 5) && milimetersToInches(leftAlignerDistance.getDistance()) != 0;
+  bool right = (fabs(milimetersToInches(rightAlignerDistance.getDistance()) - expected + 5) < 5) && milimetersToInches(rightAlignerDistance.getDistance()) != 0;
+  printConsole(left);
+  printConsole(right);
+  printConsole(milimetersToInches(leftAlignerDistance.getDistance()) + 5);
+  printConsole(milimetersToInches(rightAlignerDistance.getDistance()) + 5);
+  printConsole(expected);
   if(left && right){
     return 2;
   }
