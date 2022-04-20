@@ -62,6 +62,4 @@ public:
 
   void calibrate();
   static void filter();
-  void start();
-  void stop();
 };
