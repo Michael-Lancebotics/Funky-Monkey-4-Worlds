@@ -24,7 +24,7 @@ void Rollers::run(){
       break;
 
       case RollersState::smart:
-      if(twoBar.getState() == PistonState::extend && twoBar.hasMogo()){//FourBarRotation.get_position() > -20400 &&
+      if(twoBar.getState() == PistonState::extend && twoBar.hasMogo() && fourBar.getState() != LiftTargets::down){//FourBarRotation.get_position() > -20400 &&
         rollers.move(127);
         if(abs(rollers.getActualSpeed()) < 10){
           stuckTime += 1;

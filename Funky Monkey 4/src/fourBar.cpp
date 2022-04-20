@@ -23,6 +23,7 @@ void FourBar::run(){
       else if(abs(pwr) < 20){
         pwr = 20*sgn(pwr);
       }
+      printConsole(pwr);
       // printBrain(4, pwr);
       // printConsole(error);
       // printConsole(kP);
@@ -33,7 +34,7 @@ void FourBar::run(){
     else{
       pwr = 0;
       // printBrain(4, pwr);
-      move(0);//claw.hasMogo() ? 10 :
+      move(claw.hasMogo() ? 10 : 0);
     }
     pros::delay(DELAY_TIME);
   }

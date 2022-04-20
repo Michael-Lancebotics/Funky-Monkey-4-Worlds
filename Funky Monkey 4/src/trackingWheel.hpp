@@ -1,6 +1,6 @@
 #include "main.h"
 
-#define Y_TRACKING_WHEEL_DISTANCE -1.25
+#define Y_TRACKING_WHEEL_DISTANCE -0.75
 #define X_TRACKING_WHEEL_DISTANCE 0.5
 
 class TrackingWheel{

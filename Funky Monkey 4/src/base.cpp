@@ -140,7 +140,7 @@ void Base::driveToPoint(double itargetX, double itargetY, double maxErrorX, bool
 
   double localYVel = odom.getXVel() * sin(odom.getA()) + odom.getYVel() * cos(odom.getA());
 
-  while(((fabs(errorY) > 2.0625 || localYVel < 20) && (fabs(errorY) > 0.5 || localYVel >= 20)) && (!controller.getPress(X) || controller.getInAutonomous()) && duration < 7000){
+  while(((fabs(errorY) > 1 || localYVel < 20) && (fabs(errorY) > 0.5 || localYVel >= 20)) && (!controller.getPress(X) || controller.getInAutonomous()) && duration < 7000){
     //update errors
     totalError = findDist(odom.getX(), odom.getY(), targetX, targetY);
 
@@ -195,11 +195,11 @@ void Base::driveToPoint(double itargetX, double itargetY, double maxErrorX, bool
     pros::delay(DELAY_TIME);
   }
   // if(odom.getXVel() * sin(odom.getA()) + odom.getYVel() * cos(odom.getA()) > 20){
-    while(localYVel*-boolToSgn(reverse) > 0){
-      localYVel = odom.getXVel() * sin(odom.getA()) + odom.getYVel() * cos(odom.getA());
-      setDrive(-10 * -boolToSgn(reverse), 0);
-      pros::delay(1);
-    }
+    // while(localYVel*-boolToSgn(reverse) > 0){
+    //   localYVel = odom.getXVel() * sin(odom.getA()) + odom.getYVel() * cos(odom.getA());
+    //   setDrive(-10 * -boolToSgn(reverse), 0);
+    //   pros::delay(1);
+    // }
   // }
   // else{
   //   while(fabs(errorY) > 0.5){
@@ -386,7 +386,7 @@ void Base::turnToAngle(double itargetA, bool reverse, int minSpeed, int maxSpeed
 
 double Base::findPwrY(double error, double initialError, int maxSpeed, int minSpeed, bool accel, bool decel){
   // double accelSlope = 0.0000001;
-  double decelSlope = 13.75;
+  double decelSlope = 16;
   // if(accel && decel){
     // return setMin(setMax(fabs(127*(tanh(error/decelSlope))-127*tanh((error-initialError)/accelSlope)-127), maxSpeed), minSpeed);
   // }
@@ -493,7 +493,7 @@ void Base::driveToMogo(double mogoX, double mogoY, bool correct, double itargetX
         }
       }
       else{
-        pwrA = 20 * mogosDetected;
+        pwrA = 20 * mogosDetected * -boolToSgn(reverse);
       }
     }
     else{
@@ -524,8 +524,8 @@ void Base::driveToMogo(double mogoX, double mogoY, bool correct, double itargetX
       break;
     }
     else if(reverse && twoBar.hasMogo()){
-      twoBar.close();
-      pros::delay(100);
+      // pros::delay(100);
+      // twoBar.close();
       break;
     }
 
