@@ -25,30 +25,35 @@ void Odometry::stopDistanceFilter(){//stops the robot task
 }
 
 void Odometry::reset(double ix, double iy, double iangle){
-  odom.setAngle(degToRad(iangle));
-  odom.inertial.setRotation(iangle);
-  odom.setX(ix);
-  odom.setY(iy);
-  // position.setX(ix);
-  // position.setY(iy);
-  // position.setAngle(iangle);
+  stop();
+  inertial.stop();
+  a = degToRad(iangle);
+  inertial.setRotation(iangle);
+  x = ix;
+  y = iy;
+  inertial.start();
+  start();
 }
 
 void Odometry::reset(double ix, double iy){
-  odom.setX(ix);
-  odom.setY(iy);
-  // position.setX(ix);
-  // position.setY(iy);
+  stop();
+  inertial.stop();
+  x = ix;
+  y = iy;
+  inertial.start();
+  start();
 }
 
 void Odometry::reset(){
-  odom.setAngle(0);
-  odom.inertial.setRotation(0);
-  odom.setX(0);
-  odom.setY(0);
-  // position.setX(0);
-  // position.setY(0);
-  // position.setAngle(0);
+  stop();
+  inertial.stop();
+  a = 0;
+  inertial.setRotation(0);
+  x = 0;
+  y = 0;
+  inertial.start();
+  start();
+  pros::delay(100);
 }
 
 void Odometry::calibrate(){
@@ -142,9 +147,9 @@ void Odometry::update(){//odometry
   double sideCord = 0;
   double alpha = 0, averageTheta = 0;
   double deltaLocalXSide = 0, deltaLocalYSide = 0, deltaLocalXRight = 0, deltaLocalYRight = 0;
-  double currentLeft = 0, currentRight = 0, currentSide = 0;
+  double currentLeft = 0, currentRight = odom.yWheel.getPosition() / 360.0 * (odom.yWheel.getDiameter() * M_PI), currentSide = odom.xWheel.getPosition() / 360.0 * (odom.xWheel.getDiameter() * M_PI);
   double deltaLeft = 0, deltaRight = 0, deltaSide = 0;
-  double lastLeft = 0, lastRight = 0, lastSide = 0;
+  double lastLeft = 0, lastRight = odom.yWheel.getPosition() / 360.0 * (odom.yWheel.getDiameter() * M_PI), lastSide = odom.xWheel.getPosition() / 360.0 * (odom.xWheel.getDiameter() * M_PI);
   unsigned long lastCheck = 0;
   double lastX = 0, lastY = 0, lastAngle = 0;
   double inertialValue = 0, angleVal = 0;
@@ -195,10 +200,6 @@ void Odometry::update(){//odometry
     //updating the global angle
 	  odom.a += deltaTheta;
 
-    // position.setX(odom.x);
-    // position.setY(odom.y);
-    // position.setAngle(odom.a);
-
     if(pros::millis() >= lastCheck + 40){
       odom.velX = ((odom.x - lastX) * 1000) / (pros::millis() - lastCheck);
       odom.velY = ((odom.y - lastY) * 1000) / (pros::millis() - lastCheck);
@@ -208,10 +209,6 @@ void Odometry::update(){//odometry
       lastAngle = odom.a;
       lastCheck = pros::millis();
     }
-
-    // velocity.setvelX(odom.velX);
-    // velocity.setvelY(odom.velY);
-    // velocity.setvelA(odom.velA);
 
     pros::lcd::clear_line(1);
     pros::lcd::print(1, "x: %.2f y: %.2f, a: %.2f", odom.x, odom.y, radToDeg(odom.a));

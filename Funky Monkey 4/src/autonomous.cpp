@@ -3,6 +3,7 @@
 void Auton::start(){
   // programmingSkills();
   rightSide();
+  // leftSide();
 }
 
 void Auton::select(){}
@@ -36,20 +37,13 @@ void Auton::programmingSkills(){
   // base.arcToPoint(39.22, 126.4, 128, 1, false, 20, 127, false, true);
 }
 
-void Auton::test(){
-  pros::delay(900);
-  fourBar.claw.close();
-}
-
 void Auton::rightSide(){
   odom.reset();
-  // testTask = new pros::Task(test);
   base.driveToMogo(0, 40, false, 0, 50, 0.5, false, 20, 127);
   fourBar.claw.close();
   base.driveToPoint(0, 21, 3, true, 20, 127);
   fourBar.setState(LiftTargets::hover);
   pros::delay(300);
-  // base.turnToAngle(90, true, 20, 90);
   fourBar.setState(LiftTargets::down);
   base.turnToPoint(13.5, 17, true, 20, 80);
   printBrain(3, odom.getX());
@@ -72,4 +66,25 @@ void Auton::rightSide(){
   base.driveToPoint(11, 5, 1, true, 20, 60);
   base.turnToAngle(90);
   fourBar.setState(LiftTargets::down);
+}
+
+void Auton::leftSide(){
+  odom.reset(0, 0, 8.5);
+  // base.driveToMogo(0, 40, false, 0, 50, 0.5, false, 20, 127);
+  // fourBar.claw.close();
+  base.driveToMogo(sin(degToRad(8.5))*40, cos(degToRad(8.5))*40, false, sin(degToRad(8.5))*48, cos(degToRad(8.5))*48, 0.5, false, 20, 127);//move 50 at 8.5 deg
+  fourBar.claw.close();
+// base.driveToPoint(-6, -2, 3, true, 127, 50);
+// fourBar.setState(LiftTargets::hover);
+// base.turnToPoint(4, -6, true, 80, 20);
+// base.driveToPoint(4, -6, 3, true, 127, 50);
+// base.setDrive(-40, 0);
+// pros::delay(200);
+// twoBar.close();
+// pros::delay(200);
+// rollers.setState(RollersState::smart);
+// base.driveToPoint(-16, -6, 3, false, 60, 20);
+// base.driveToPoint(4, -6, 3, true, 60, 20);
+// base.driveToPoint(-16, -6, 3, false, 60, 20);
+// base.driveToPoint(4, -6, 3, true, 60, 20);
 }

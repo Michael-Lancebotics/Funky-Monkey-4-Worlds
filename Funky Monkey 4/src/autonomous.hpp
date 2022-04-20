@@ -10,11 +10,9 @@ private:
   void winPoint();
   pros::Task *fourBarTask = nullptr;
   pros::Task *rollerTask = nullptr;
-  pros::Task *testTask = nullptr;
 
   static void fourBarController();
   static void rollerController();
-  static void test();
 
 public:
   Auton(){}

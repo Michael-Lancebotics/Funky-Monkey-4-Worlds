@@ -50,11 +50,11 @@ public:
     encoder = new pros::ADIEncoder(port, port+1, reverse);
   }
 
-  void setDistance(int idistance){
+  void setDistance(double idistance){
     distance = idistance;
   }
 
-  void setDiameter(int idiameter){
+  void setDiameter(double idiameter){
     diameter = idiameter;
   }
 

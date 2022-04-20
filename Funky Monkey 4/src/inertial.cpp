@@ -1,14 +1,14 @@
 #include "robot.hpp"
 
 void Inertial::filter(){
-  double currentRotation = 0;
-  double lastRotation = 0;
+  double currentRotation = odom.inertial.getRawRotation();
+  double lastRotation = odom.inertial.getRawRotation();
   double filteredRotation = 0;
-  double currentPitch = 0;
-  double lastPitch = 0;
+  double currentPitch = odom.inertial.getRawPitch();
+  double lastPitch = odom.inertial.getRawPitch();
   double filteredPitch = 0;
-  double currentRoll = 0;
-  double lastRoll = 0;
+  double currentRoll = odom.inertial.getRawRoll();
+  double lastRoll = odom.inertial.getRawRoll();
   double filteredRoll = 0;
   while(true){
     currentRotation = odom.inertial.getRawRotation();
@@ -48,4 +48,16 @@ void Inertial::calibrate(){
   }
 
   filterTask = new pros::Task(filter);
+}
+
+void Inertial::start(){
+  filterTask = new pros::Task(filter);
+}
+
+void Inertial::stop(){
+  if(filterTask != nullptr){
+    filterTask->remove();
+    delete filterTask;
+    filterTask = nullptr;
+  }
 }

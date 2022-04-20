@@ -3,7 +3,7 @@
 void initialize(){
 	pros::lcd::initialize();
 	// auton.select();
-	base.hold();
+	// base.hold();
 	fourBar.hold();
 	// fourBar.setup();
 	odom.calibrate();
@@ -19,5 +19,6 @@ void autonomous(){
 }
 
 void opcontrol(){
-	driveControl.start();
+	base.driveToPoint(0, 10);
+	// driveControl.start();
 }
