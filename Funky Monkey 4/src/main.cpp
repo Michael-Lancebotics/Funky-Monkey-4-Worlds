@@ -5,6 +5,7 @@ void initialize(){
 	// auton.select();
 	base.hold();
 	fourBar.hold();
+	// fourBar.setup();
 	odom.calibrate();
 	auton.programmingSkillsSetup();
 }
@@ -25,6 +26,7 @@ void autonomous(){
 }
 
 void opcontrol(){
+	base.turnToMogo(-25, 0);
 	// while(true){
 	// 	printConsole(twoBar.getDistance());
 	// }

@@ -145,7 +145,7 @@ void Base::driveToPoint(double itargetX, double itargetY, double maxErrorX, bool
     totalError = findDist(odom.getX(), odom.getY(), targetX, targetY);
 
     //setting velocity
-    pwrY = findPwrY(totalError, totalErrorInitial, maxSpeed, minSpeed, accelerate, decelerate);
+    pwrY = findPwrY(totalError, totalErrorInitial, minSpeed, maxSpeed, accelerate, decelerate);
     motionAngle = angleInRange(findAngle(odom.getX(), odom.getY(), targetX, targetY) + (reverse ? M_PI : 0));
     errorAngle = angleInRange(motionAngle - odom.getA());
 
@@ -153,7 +153,7 @@ void Base::driveToPoint(double itargetX, double itargetY, double maxErrorX, bool
     errorY = totalError * cos(errorAngle);
 
     if(fabs(errorX) > maxErrorX){
-      pwrA = findCorrection(errorX, maxSpeed, minSpeed);
+      pwrA = findCorrection(errorX, minSpeed, maxSpeed);
     }
     else{
       pwrA = 0;
@@ -239,7 +239,7 @@ void Base::driveToDistance(double targetDistance, double itargetA, double maxErr
     totalError = findDist(odom.getX(), odom.getY(), targetX, targetY);
 
     //setting velocity
-    pwrY = findPwrY(totalError, totalErrorInitial, maxSpeed, minSpeed, accelerate, decelerate);
+    pwrY = findPwrY(totalError, totalErrorInitial, minSpeed, maxSpeed, accelerate, decelerate);
     motionAngle = angleInRange(findAngle(odom.getX(), odom.getY(), targetX, targetY) + (reverse ? M_PI : 0));
     errorAngle = angleInRange(motionAngle - odom.getA());
 
@@ -247,7 +247,7 @@ void Base::driveToDistance(double targetDistance, double itargetA, double maxErr
     errorY = totalError * cos(errorAngle);
 
     if(fabs(errorX) > maxErrorX){
-      pwrA = findCorrection(errorX, maxSpeed, minSpeed);
+      pwrA = findCorrection(errorX, minSpeed, maxSpeed);
     }
     else{
       pwrA = 0;
@@ -316,7 +316,7 @@ void Base::turnToPoint(double itargetX, double itargetY, bool reverse, int minSp
   while(fabs(errorAngle) > degToRad(1) && (!controller.getPress(X) || controller.getInAutonomous()) && duration < 3000){
     errorAngle = angleInRange(findAngle(odom.getX(), odom.getY(), targetX, targetY) - odom.getA() + (reverse ? M_PI : 0));
 
-    pwrA = findPwrA(errorAngle, maxSpeed, minSpeed, initError)*sgn(errorAngle);
+    pwrA = findPwrA(errorAngle, minSpeed, maxSpeed, initError)*sgn(errorAngle);
 
     printConsole(radToDeg(errorAngle));
     printConsole(pwrA);
@@ -358,7 +358,7 @@ void Base::turnToAngle(double itargetA, bool reverse, int minSpeed, int maxSpeed
 
   while(fabs(errorAngle) > degToRad(1) && (!controller.getPress(X) || controller.getInAutonomous()) && duration < 3000){
     errorAngle = angleInRange(targetA - odom.getA() + (reverse ? M_PI : 0));
-    pwrA = findPwrA(errorAngle, maxSpeed, minSpeed, initError)*sgn(errorAngle);
+    pwrA = setMin(setMax(findPwrA(errorAngle, minSpeed, maxSpeed, initError), maxSpeed), minSpeed)*sgn(errorAngle);
 
     printConsole(radToDeg(errorAngle));
     printConsole(pwrA);
@@ -465,6 +465,8 @@ void Base::driveToMogo(double mogoX, double mogoY, bool correct, double itargetX
   unsigned long now = pros::millis();
   unsigned long duration = now - start;
 
+  double localYVel = odom.getXVel() * sin(odom.getA()) + odom.getYVel() * cos(odom.getA());
+
   int mogosDetected = reverse ? twoBar.mogoAligned(mogoX, mogoY) : fourBar.claw.mogoAligned(mogoX, mogoY);
 
   while(fabs(errorY) > 0.5 && (!controller.getPress(X) || controller.getInAutonomous()) && duration < 7000){
@@ -472,7 +474,7 @@ void Base::driveToMogo(double mogoX, double mogoY, bool correct, double itargetX
     totalError = findDist(odom.getX(), odom.getY(), targetX, targetY);
 
     //setting velocity
-    pwrY = findPwrY(totalError, totalErrorInitial, maxSpeed, minSpeed, accelerate, decelerate);
+    pwrY = findPwrY(totalError, totalErrorInitial, minSpeed, maxSpeed, accelerate, decelerate);
     motionAngle = angleInRange(findAngle(odom.getX(), odom.getY(), targetX, targetY) + (reverse ? M_PI : 0));
     errorAngle = angleInRange(motionAngle - odom.getA());
 
@@ -487,7 +489,7 @@ void Base::driveToMogo(double mogoX, double mogoY, bool correct, double itargetX
       }
       else if(mogosDetected == 0){
         if(fabs(errorX) > maxErrorX){
-          pwrA = findCorrection(errorX, maxSpeed, minSpeed);
+          pwrA = findCorrection(errorX, minSpeed, maxSpeed);
         }
       }
       else{
@@ -496,7 +498,7 @@ void Base::driveToMogo(double mogoX, double mogoY, bool correct, double itargetX
     }
     else{
       if(fabs(errorX) > maxErrorX){
-        pwrA = findCorrection(errorX, maxSpeed, minSpeed);
+        pwrA = findCorrection(errorX, minSpeed, maxSpeed);
       }
     }
 
@@ -511,14 +513,19 @@ void Base::driveToMogo(double mogoX, double mogoY, bool correct, double itargetX
       pwrA = (pwrA / totalPwr) * 127;
     }
 
-    if(!reverse && fourBar.claw.hasMogo()){
+    localYVel = odom.getXVel() * sin(odom.getA()) + odom.getYVel() * cos(odom.getA());
+
+    if(!reverse && fourBar.claw.getDistance() < 172){
       fourBar.claw.close();
+      printBrain(5, localYVel);
+      printBrain(6, duration);
+      // setDrive(127, 0);
       pros::delay(50);
       break;
     }
     else if(reverse && twoBar.hasMogo()){
       twoBar.close();
-      pros::delay(50);
+      pros::delay(100);
       break;
     }
 
@@ -531,6 +538,55 @@ void Base::driveToMogo(double mogoX, double mogoY, bool correct, double itargetX
   }
   //stopping the drive
   setDrive(0, 0);
+}
+
+void Base::turnToMogo(double mogoX, double mogoY, bool reverse, int minSpeed, int maxSpeed, bool accelerate, bool decelerate){
+  targetX = mogoX;
+  targetY = mogoY;
+  double pwrA = 0;
+  double errorAngle = angleInRange(findAngle(odom.getX(), odom.getY(), targetX, targetY) - odom.getA() + (reverse ? M_PI : 0));
+  errorAngle += degToRad(15)*sgn(errorAngle);
+
+  unsigned long start = pros::millis();
+  unsigned long now = pros::millis();
+  unsigned long duration = now - start;
+
+  double initError = radToDeg(errorAngle);
+
+  // bool left = (errorAngle > 0 && !reverse) || (errorAngle > 0 && reverse);
+
+  int mogosDetected = reverse ? twoBar.mogoAligned(mogoX, mogoY) : fourBar.claw.mogoAligned(mogoX, mogoY);
+
+  while(mogosDetected != 2 && (!controller.getPress(X) || controller.getInAutonomous()) && duration < 3000){
+    errorAngle = angleInRange(findAngle(odom.getX(), odom.getY(), targetX, targetY) - odom.getA() + (reverse ? M_PI : 0));
+    errorAngle += degToRad(15)*sgn(errorAngle);
+
+    pwrA = findPwrA(errorAngle, minSpeed, maxSpeed, initError)*sgn(errorAngle);
+
+    if(fabs(errorAngle) < degToRad(15)){
+      pwrA = 15*sgn(pwrA);
+    }
+
+    setDrive(0, pwrA);
+
+    now = pros::millis();
+    duration = now - start;
+    printConsole(duration);
+
+    // if(duration > 1000 && odom.endTarget.getSafety() && velocity.getYVelocity() == 0 && velocity.getXVelocity() == 0 && velocity.getAngleVelocity() == 0) return;
+    mogosDetected = reverse ? twoBar.mogoAligned(mogoX, mogoY) : fourBar.claw.mogoAligned(mogoX, mogoY);
+    printConsole(mogosDetected);
+    pros::delay(DELAY_TIME);
+  }
+  // while(odom.getAVel() * -boolToSgn(reverse) > 0){
+  //   setDrive(0,-10 * -boolToSgn(reverse));
+  //   pros::delay(DELAY_TIME);
+  // }
+  //stopping the drive
+  setDrive(0, 0);
+  now = pros::millis();
+  duration = now - start;
+  printConsole(duration);
 }
 
 double Base::getActualPwrA(){

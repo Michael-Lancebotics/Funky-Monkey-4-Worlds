@@ -1,5 +1,9 @@
 #include "robot.hpp"
 
+void FourBar::setup(){
+  calibrateTask = new pros::Task(calibrate);
+}
+
 void FourBar::move(int pwr){
   motor.move(pwr);
 }
@@ -36,11 +40,12 @@ void FourBar::run(){
 }
 
 void FourBar::calibrate(){
-  // move(-30);
-  // pros::delay(200);
-  // while(abs(motor.getActualSpeed()) > 0){
-  //   pros::delay(DELAY_TIME);
-  // }
+  fourBar.move(-90);
+  pros::delay(200);
+  while(abs(fourBar.motor.getActualSpeed()) > 0){
+    pros::delay(DELAY_TIME);
+  }
+  fourBar.rotation.reset();
 }
 
 void FourBar::moveToTarget(){

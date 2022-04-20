@@ -3,7 +3,7 @@
 #include "rotation.hpp"
 #include "claw.hpp"
 
-enum class LiftTargets{ down = -35859, hover = -24407, platform = -5633, score = 20171};
+enum class LiftTargets{ down = -36859, hover = -22407, platform = -5633, score = 20171};
 
 class FourBar{
 private:
@@ -11,6 +11,7 @@ private:
   Motor motor;
   Rotation rotation;
   LiftTargets target;
+  pros::Task *calibrateTask = nullptr;
 
 public:
   FourBar(){}
@@ -72,10 +73,10 @@ public:
     motor.hold();
   }
 
+  static void calibrate();
+  void setup();
   void move(int pwr);
-  void calibrate();
   void moveToTarget();
   void raiseWhenDetected();
   void run();
-
 };
