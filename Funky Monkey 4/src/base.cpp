@@ -145,7 +145,7 @@ void Base::driveToPoint(double itargetX, double itargetY, double maxErrorX, bool
     totalError = findDist(odom.getX(), odom.getY(), targetX, targetY);
 
     //setting velocity
-    pwrY = findPwrY(totalError, totalErrorInitial, minSpeed, maxSpeed, accelerate, decelerate);
+    pwrY = findPwrY(totalError, totalErrorInitial, maxSpeed, minSpeed, accelerate, decelerate);
     motionAngle = angleInRange(findAngle(odom.getX(), odom.getY(), targetX, targetY) + (reverse ? M_PI : 0));
     errorAngle = angleInRange(motionAngle - odom.getA());
 

@@ -3,8 +3,8 @@
 void initialize(){
 	pros::lcd::initialize();
 	// auton.select();
-	base.hold();
-	fourBar.hold();
+	// base.hold();
+	// fourBar.hold();
 	// fourBar.setup();
 	odom.calibrate();
 	auton.programmingSkillsSetup();
