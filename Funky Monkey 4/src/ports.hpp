@@ -10,6 +10,8 @@
 #define FRONT_CLAW_PORT 6, false
 #define TWO_BAR_PORT 5, true
 
+#define SELECTOR_PORT 8
+
 #define FOUR_BAR_ROTATION_PORT 14, true
 
 #define FOUR_BAR_DISTANCE_PORT 6

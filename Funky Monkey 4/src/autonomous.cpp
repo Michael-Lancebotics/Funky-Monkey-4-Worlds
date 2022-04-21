@@ -1,13 +1,23 @@
 #include "robot.hpp"
 
 void Auton::start(){
-  // programmingSkills();
-  // rightSide();
-  // leftSide();
-  winPoint();
+  autons[auton]();
 }
 
-void Auton::select(){}
+void Auton::select(){
+  auton = 0;
+  std::string print;
+  while(!controller.getEnabled()){
+    if(selector.getPressed()){
+      auton += 1;
+      if(auton > autons.size()){
+        auton = 0;
+      }
+      print = "Auton Selected: " + autonNames[auton];
+      printBrainText(0, print);
+    }
+  }
+}
 
 void Auton::programmingSkillsSetup(){
   fourBar.claw.open();
@@ -36,11 +46,6 @@ void Auton::programmingSkills(){
   fourBar.claw.close();
   fourBar.setState(LiftTargets::score);
   // base.arcToPoint(39.22, 126.4, 128, 1, false, 20, 127, false, true);
-}
-
-void Auton::test(){
-  pros::delay(900);
-  fourBar.claw.close();
 }
 
 void Auton::rightSide(){

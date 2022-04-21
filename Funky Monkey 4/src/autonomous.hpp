@@ -1,23 +1,37 @@
 #include "main.h"
+#include "button.hpp"
 
 class Auton{
 private:
-  void programmingSkills();
-  void rightSide();
-  void middleFromRight();
-  void middleFromLeft();
-  void leftSide();
-  void winPoint();
+  static void programmingSkills();
+  static void rightSide();
+  static void middleFromRight();
+  static void middleFromLeft();
+  static void leftSide();
+  static void winPoint();
   pros::Task *fourBarTask = nullptr;
   pros::Task *rollerTask = nullptr;
-  pros::Task *testTask = nullptr;
 
   static void fourBarController();
   static void rollerController();
-  static void test();
+
+  Button selector;
+
+  int auton;
+  std::vector<void(*)()> autons;
+  std::vector<std::string> autonNames;
 
 public:
-  Auton(){}
+  Auton(Button iselector){
+    selector = iselector;
+    autons = {rightSide, leftSide, middleFromRight, middleFromLeft, winPoint};
+    autonNames = {"rightSide", "leftSide", "middleFromRight", "middleFromLeft", "winPoint"};
+  }
+
+  void setAuton(int iauton){
+    auton = iauton;
+  }
+
   void programmingSkillsSetup();
   void start();
   void select();

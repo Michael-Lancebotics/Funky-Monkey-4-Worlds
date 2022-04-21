@@ -6,6 +6,7 @@ void initialize(){
 	// base.hold();
 	// fourBar.hold();
 	// fourBar.setup();
+	controller.getCompetitionSwitch() ? auton.select() : auton.setAuton(0);
 	odom.calibrate();
 	auton.programmingSkillsSetup();
 }
