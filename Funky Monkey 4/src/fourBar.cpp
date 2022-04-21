@@ -23,12 +23,6 @@ void FourBar::run(){
       else if(abs(pwr) < 20){
         pwr = 20*sgn(pwr);
       }
-      printConsole(pwr);
-      // printBrain(4, pwr);
-      // printConsole(error);
-      // printConsole(kP);
-      // printConsole(getPosition());
-      // printConsole(pwr);
       move(pwr);
     }
     else{

@@ -1,6 +1,7 @@
 #include "robot.hpp"
 
 void Auton::start(){
+  printConsole(auton);
   autons[auton]();
 }
 
@@ -8,14 +9,16 @@ void Auton::select(){
   auton = 0;
   std::string print;
   while(!controller.getEnabled()){
-    if(selector.getPressed()){
+    if(selector.getNewPress()){
       auton += 1;
-      if(auton > autons.size()){
+      if(auton >= autons.size()){
         auton = 0;
       }
-      print = "Auton Selected: " + autonNames[auton];
-      printBrainText(0, print);
     }
+    printConsole(auton);
+    print = "Auton Selected: " + autonNames[auton];
+    printBrainText(0, print);
+    pros::delay(DELAY_TIME);
   }
 }
 
@@ -49,6 +52,7 @@ void Auton::programmingSkills(){
 }
 
 void Auton::rightSide(){
+  printConsoleText("right side");
   odom.reset();
   base.driveToMogo(0, 40, false, 0, 50, 0.5, false, 20, 127);
   fourBar.claw.close();
@@ -77,6 +81,7 @@ void Auton::rightSide(){
 }
 
 void Auton::leftSide(){
+  printConsoleText("left side");
   odom.reset(0, 0, 8.5);
   base.driveToMogo(sin(degToRad(8.5))*40, cos(degToRad(8.5))*40, false, sin(degToRad(8.5))*50, cos(degToRad(8.5))*50, 0.5, false, 20, 127);
   fourBar.claw.close();
@@ -107,6 +112,7 @@ void Auton::leftSide(){
 }
 
 void Auton::winPoint(){
+  printConsoleText("win point");
   odom.reset();
   base.driveToMogo(0, 40, false, 0, 50, 0.5, false, 20, 127);
   fourBar.claw.close();
@@ -135,9 +141,9 @@ void Auton::winPoint(){
   }
   base.setDrive(0, 0);
   base.turnToAngle(90, true, 20, 60);
-  fourBar.setState(LiftTargets::down);
-  pros::delay(100);
-  base.driveToMogo(-75, odom.getY(), true, 15, odom.getY(), 3, true, 20, 127);
+  fourBar.setState(LiftTargets::hover);
+  pros::delay(500);
+  base.driveToMogo(-75, odom.getY(), true, -60, odom.getY(), 3, true, 20, 60);
   base.setDrive(-40, 0);
   pros::delay(200);
   twoBar.close();
@@ -148,4 +154,11 @@ void Auton::winPoint(){
   rollers.setState(RollersState::smart);
   base.driveToPoint(-97, odom.getY(), 3, false, 20, 40);
   base.driveToPoint(-79, odom.getY(), 3, true, 20, 80);
+}
+
+void Auton::middleFromLeft(){
+  printConsoleText("mid left");
+}
+void Auton::middleFromRight(){
+  printConsoleText("mid right");
 }
