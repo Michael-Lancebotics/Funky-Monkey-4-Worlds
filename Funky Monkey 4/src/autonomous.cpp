@@ -2,8 +2,9 @@
 
 void Auton::start(){
   // programmingSkills();
-  rightSide();
+  // rightSide();
   // leftSide();
+  winPoint();
 }
 
 void Auton::select(){}
@@ -44,24 +45,19 @@ void Auton::test(){
 
 void Auton::rightSide(){
   odom.reset();
-  // testTask = new pros::Task(test);
   base.driveToMogo(0, 40, false, 0, 50, 0.5, false, 20, 127);
   fourBar.claw.close();
   base.driveToPoint(0, 21, 3, true, 20, 127);
   fourBar.setState(LiftTargets::hover);
   pros::delay(300);
-  // base.turnToAngle(90, true, 20, 90);
   base.turnToPoint(13.5, 17, true, 20, 80);
   fourBar.setState(LiftTargets::down);
-  printBrain(3, odom.getX());
-  printBrain(4, odom.getY());
   base.driveToMogo(13.5, 17, true, 20, 17, 2, true, 20, 50);
   fourBar.setState(LiftTargets::score);
   base.setDrive(-50, 0);
   pros::delay(300);
   twoBar.close();
   pros::delay(300);
-  printBrain(0, odom.getX());
   base.driveToPoint(15, 20, 0, false, 20, 60);
   base.turnToAngle(0);
   rollers.setState(RollersState::smart);
@@ -103,4 +99,48 @@ void Auton::leftSide(){
   pros::delay(1000);
   base.driveToPoint(-18, odom.getY(), 3, false, 20, 40);
   base.driveToPoint(-1, odom.getY(), 3, true, 20, 80);
+}
+
+void Auton::winPoint(){
+  odom.reset();
+  base.driveToMogo(0, 40, false, 0, 50, 0.5, false, 20, 127);
+  fourBar.claw.close();
+  base.driveToPoint(0, 21, 3, true, 20, 127);
+  fourBar.setState(LiftTargets::hover);
+  pros::delay(300);
+  base.turnToPoint(13.5, 17, true, 20, 80);
+  fourBar.setState(LiftTargets::down);
+  base.driveToMogo(13.5, 17, true, 20, 17, 2, true, 20, 50);
+  fourBar.setState(LiftTargets::score);
+  base.setDrive(-50, 0);
+  pros::delay(300);
+  twoBar.close();
+  pros::delay(300);
+  rollers.setState(RollersState::smart);
+  base.driveToPoint(-70, 17, 0, false, 20, 127);
+  twoBar.open();
+  rollers.setState(RollersState::stop);
+  odom.reset(odom.getY(), -odom.getX(), radToDeg(odom.getA() + (M_PI/2)));
+  base.arcToPoint(-3, 90, 270, 1, false, 20, 70);
+  odom.reset(-odom.getY(), odom.getX(), radToDeg(odom.getA() - (M_PI/2)));
+  long start = pros::millis();
+  while((pros::millis() - start) < 800){
+    base.setDrive(80, 0);
+    pros::delay(DELAY_TIME);
+  }
+  base.setDrive(0, 0);
+  base.turnToAngle(90, true, 20, 60);
+  fourBar.setState(LiftTargets::down);
+  pros::delay(100);
+  base.driveToMogo(-75, odom.getY(), true, 15, odom.getY(), 3, true, 20, 127);
+  base.setDrive(-40, 0);
+  pros::delay(200);
+  twoBar.close();
+  pros::delay(200);
+  base.setDrive(0, 0);
+  fourBar.setState(LiftTargets::score);
+  pros::delay(500);
+  rollers.setState(RollersState::smart);
+  base.driveToPoint(-97, odom.getY(), 3, false, 20, 40);
+  base.driveToPoint(-79, odom.getY(), 3, true, 20, 80);
 }
