@@ -163,6 +163,10 @@ void Base::driveToPoint(double itargetX, double itargetY, double maxErrorX, bool
 
     pwrY = pwrY*sgn(cos(errorAngle)) * -boolToSgn(reverse);
 
+    if(!decelerate){
+      pwrY = maxSpeed*sgn(pwrY);
+    }
+
     //finding the absolute total of all the values
     totalPwr = fabs(pwrY) + fabs(pwrA);
 
@@ -209,7 +213,9 @@ void Base::driveToPoint(double itargetX, double itargetY, double maxErrorX, bool
   // }
   now = pros::millis();
   duration = now - start;
-  setDrive(0, 0);
+  if(decelerate){
+    setDrive(0, 0);
+  }
   printConsole(duration);
 }
 
@@ -517,6 +523,7 @@ void Base::driveToMogo(double mogoX, double mogoY, bool correct, double itargetX
 
     if(!reverse && fourBar.claw.getDistance() < 172){
       fourBar.claw.close();
+      printBrain(6, targetX);
       printBrain(7, duration);
       // setDrive(127, 0);
       pros::delay(50);

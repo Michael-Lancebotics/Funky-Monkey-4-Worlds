@@ -3,7 +3,7 @@
 #include "rotation.hpp"
 #include "claw.hpp"
 
-enum class LiftTargets{ down = -34000, hover = -22407, platform = -5633, score = 20171};
+enum class LiftTargets{ down = -32500, hover = -22407, platform = -5633, score = 20171};
 
 class FourBar{
 private:
