@@ -43,6 +43,12 @@ void DriveControl::baseController(){
   double totalPwr = 0;
   bool coast = true;
   while(true){
+    if(fourBar.claw.getState() == PistonState::retract){
+      printBrainText(4, "retract");
+    }
+    else if(fourBar.claw.getState() == PistonState::extend){
+      printBrainText(4, "extend");
+    }
     pwrY = controller.getJoystick(LY);
     pwrA = controller.getJoystick(RX);
 
@@ -92,6 +98,9 @@ void DriveControl::fourBarManager(){
     }
     if(controller.getNewPress(A)){
       fourBar.claw.switchState();
+      if(fourBar.claw.getState() == PistonState::extend){
+        controller.rumble(".");
+      }
     }
     pros::delay(DELAY_TIME);
   }

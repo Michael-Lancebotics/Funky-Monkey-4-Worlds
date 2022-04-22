@@ -22,6 +22,19 @@ void Auton::select(){
   }
 }
 
+void Auton::stop(){
+  if(fourBarTask != nullptr){
+    fourBarTask->remove();
+    delete fourBarTask;
+    fourBarTask = nullptr;
+  }
+  if(rollerTask != nullptr){
+    rollerTask->remove();
+    delete rollerTask;
+    rollerTask = nullptr;
+  }
+}
+
 void Auton::programmingSkillsSetup(){
   fourBar.claw.open();
   twoBar.open();
@@ -32,10 +45,12 @@ void Auton::programmingSkillsSetup(){
 }
 
 void Auton::fourBarController(){
+  printConsoleText("at ur moms house 1");
   fourBar.run();
 }
 
 void Auton::rollerController(){
+  printConsoleText("at ur moms house 2");
   rollers.run();
 }
 
@@ -116,7 +131,7 @@ void Auton::winPoint(){
   odom.reset();
   base.driveToMogo(0, 40, false, 0, 50, 0.5, false, 20, 127);
   fourBar.claw.close();
-  base.driveToPoint(0, 21, 3, true, 20, 127);
+  base.driveToPoint(1, 21, 1, true, 20, 127);
   fourBar.setState(LiftTargets::hover);
   pros::delay(300);
   base.turnToPoint(13.5, 17, true, 20, 80);
@@ -124,9 +139,9 @@ void Auton::winPoint(){
   base.driveToMogo(13.5, 17, true, 20, 17, 2, true, 20, 50);
   fourBar.setState(LiftTargets::score);
   base.setDrive(-50, 0);
-  pros::delay(300);
+  pros::delay(400);
   twoBar.close();
-  pros::delay(300);
+  pros::delay(600);
   rollers.setState(RollersState::smart);
   base.driveToPoint(-70, 17, 0, false, 20, 127);
   twoBar.open();
@@ -140,11 +155,11 @@ void Auton::winPoint(){
     pros::delay(DELAY_TIME);
   }
   base.setDrive(0, 0);
-  base.turnToAngle(90, true, 20, 60);
-  fourBar.setState(LiftTargets::hover);
+  base.turnToAngle(90, true, 30, 60);
+  // fourBar.setState(LiftTargets::hover);
   pros::delay(500);
   base.driveToMogo(-75, odom.getY(), true, -60, odom.getY(), 3, true, 20, 60);
-  base.setDrive(-40, 0);
+  base.setDrive(-20, 0);
   pros::delay(200);
   twoBar.close();
   pros::delay(200);

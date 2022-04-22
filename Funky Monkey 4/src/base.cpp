@@ -517,8 +517,7 @@ void Base::driveToMogo(double mogoX, double mogoY, bool correct, double itargetX
 
     if(!reverse && fourBar.claw.getDistance() < 172){
       fourBar.claw.close();
-      printBrain(5, localYVel);
-      printBrain(6, duration);
+      printBrain(7, duration);
       // setDrive(127, 0);
       pros::delay(50);
       break;

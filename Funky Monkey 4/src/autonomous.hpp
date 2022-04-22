@@ -35,4 +35,5 @@ public:
   void programmingSkillsSetup();
   void start();
   void select();
+  void stop();
 };

@@ -53,4 +53,8 @@ public:
   bool getEnabled(){
     return !pros::competition::is_disabled();
   }
+
+  void rumble(const char *pattern){
+    controller.rumble(pattern);
+  }
 };

@@ -5,7 +5,8 @@ void initialize(){
 	base.hold();
 	fourBar.hold();
 	// fourBar.setup();
-	controller.getCompetitionSwitch() ? auton.select() : auton.setAuton(4);
+	// auton.select();
+	auton.setAuton(4);
 	printConsole(controller.getCompetitionSwitch());
 	odom.calibrate();
 	auton.programmingSkillsSetup();
@@ -20,11 +21,6 @@ void autonomous(){
 }
 
 void opcontrol(){
-	Button a(8);
-	while(true){
-		bool b = a.getNewPress();
-		printConsole(b);
-		pros::delay(DELAY_TIME);
-	}
-	// driveControl.start();
+	// auton.stop();
+	driveControl.start();
 }
