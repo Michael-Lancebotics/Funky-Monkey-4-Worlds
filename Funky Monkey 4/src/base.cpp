@@ -163,10 +163,6 @@ void Base::driveToPoint(double itargetX, double itargetY, double maxErrorX, bool
 
     pwrY = pwrY*sgn(cos(errorAngle)) * -boolToSgn(reverse);
 
-    if(!decelerate){
-      pwrY = maxSpeed*sgn(pwrY);
-    }
-
     //finding the absolute total of all the values
     totalPwr = fabs(pwrY) + fabs(pwrA);
 
@@ -198,11 +194,22 @@ void Base::driveToPoint(double itargetX, double itargetY, double maxErrorX, bool
     printConsole(duration);
     pros::delay(DELAY_TIME);
   }
+  // if(odom.getXVel() * sin(odom.getA()) + odom.getYVel() * cos(odom.getA()) > 20){
+    // while(localYVel*-boolToSgn(reverse) > 0){
+    //   localYVel = odom.getXVel() * sin(odom.getA()) + odom.getYVel() * cos(odom.getA());
+    //   setDrive(-10 * -boolToSgn(reverse), 0);
+    //   pros::delay(1);
+    // }
+  // }
+  // else{
+  //   while(fabs(errorY) > 0.5){
+  //     setDrive(30*fabs(errorY) , 0);
+  //     pros::delay(DELAY_TIME);
+  //   }
+  // }
   now = pros::millis();
   duration = now - start;
-  if(decelerate){
-    setDrive(0, 0);
-  }
+  setDrive(0, 0);
   printConsole(duration);
 }
 

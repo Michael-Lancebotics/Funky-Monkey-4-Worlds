@@ -6,7 +6,7 @@ void initialize(){
 	fourBar.hold();
 	// fourBar.setup();
 	// auton.select();
-	auton.setAuton(1);
+	auton.setAuton(4);
 	printConsole(controller.getCompetitionSwitch());
 	odom.calibrate();
 	auton.programmingSkillsSetup();

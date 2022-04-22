@@ -9,7 +9,6 @@ private:
   static void middleFromLeft();
   static void leftSide();
   static void winPoint();
-  static void rightMiddle();
   pros::Task *fourBarTask = nullptr;
   pros::Task *rollerTask = nullptr;
 
@@ -25,8 +24,8 @@ private:
 public:
   Auton(Button iselector){
     selector = iselector;
-    autons = {rightSide, leftSide, middleFromRight, middleFromLeft, winPoint, rightMiddle};
-    autonNames = {"rightSide", "leftSide", "middleFromRight", "middleFromLeft", "winPoint", "rightMiddle"};
+    autons = {rightSide, leftSide, middleFromRight, middleFromLeft, winPoint};
+    autonNames = {"rightSide", "leftSide", "middleFromRight", "middleFromLeft", "winPoint"};
   }
 
   void setAuton(int iauton){
