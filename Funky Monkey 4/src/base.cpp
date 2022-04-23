@@ -453,7 +453,7 @@ double Base::findCorrection(double error, int maxSpeed, int minSpeed){
   return sgn(pwr)*setMin(fabs(pwr), 20);
 }
 
-void Base::driveToMogo(double mogoX, double mogoY, bool correct, double itargetX, double itargetY, double maxErrorX, bool reverse, int minSpeed, int maxSpeed, bool accelerate, bool decelerate){
+void Base::driveToMogo(double mogoX, double mogoY, bool correct, double itargetX, double itargetY, double maxErrorX, bool reverse, int minSpeed, int maxSpeed, bool accelerate, bool decelerate, bool goFast){
   targetX = itargetX;
   targetY = itargetY;
   double totalErrorInitial = findDist(odom.getX(), odom.getY(), targetX, targetY);
@@ -521,7 +521,7 @@ void Base::driveToMogo(double mogoX, double mogoY, bool correct, double itargetX
 
     localYVel = odom.getXVel() * sin(odom.getA()) + odom.getYVel() * cos(odom.getA());
 
-    if(!reverse && fourBar.claw.getDistance() < 172){
+    if(!reverse && ((fourBar.claw.getDistance() < 172 && goFast) || (fourBar.claw.hasMogo() && !goFast))){
       fourBar.claw.close();
       printBrain(6, targetX);
       printBrain(7, duration);

@@ -54,7 +54,7 @@ class Base{
   void arcToPoint(double itargetX, double itargetY, double itargetA, double maxErrorRadius = 1, bool reverse = false, int iminSpeed = 20, int imaxSpeed = 127, bool accelerate = true, bool decelerate = true);
   void turnToPoint(double itargetX, double itargetY, bool reverse = false, int minSpeed = 20, int maxSpeed = 127, bool accelerate = true, bool decelerate = true);
   void turnToAngle(double targetA, bool reverse = false, int minSpeed = 20, int maxSpeed = 127, bool accelerate = true, bool decelerate = true);
-  void driveToMogo(double mogoX, double mogoY, bool correct, double itargetX, double itargetY, double maxErrorX = 1, bool reverse = false, int minSpeed = 20, int maxSpeed = 127, bool accelerate = true, bool decelerate = true);
+  void driveToMogo(double mogoX, double mogoY, bool correct, double itargetX, double itargetY, double maxErrorX = 1, bool reverse = false, int minSpeed = 20, int maxSpeed = 127, bool accelerate = true, bool decelerate = true, bool goFast = true);
   void turnToMogo(double mogoX, double mogoY, bool reverse = false, int minSpeed = 20, int maxSpeed = 127, bool accelerate = true, bool decelerate = true);
   void hold();
   void coast();

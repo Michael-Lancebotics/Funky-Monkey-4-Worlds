@@ -68,10 +68,10 @@ void Auton::programmingSkills(){
 
 void Auton::rightSide(){
   printConsoleText("right side");
-  odom.reset();
+  odom.reset(0, 5, 0);
   base.driveToMogo(0, 40, false, 0, 50, 0.5, false, 20, 127);
   fourBar.claw.close();
-  base.driveToPoint(0, 21, 3, true, 20, 127);
+  base.driveToPoint(0, 21, 1, true, 20, 127);
   fourBar.setState(LiftTargets::hover);
   pros::delay(300);
   base.turnToPoint(13.5, 17, true, 20, 80);
@@ -97,6 +97,7 @@ void Auton::rightSide(){
 
 void Auton::leftSide(){
   printConsoleText("left side");
+  odom.reset(5*sin(degToRad(8.5)), 5*cos(degToRad(8.5)), 8.5);
   odom.reset(0, 0, 8.5);
   base.driveToMogo(sin(degToRad(8.5))*40, cos(degToRad(8.5))*40, false, sin(degToRad(8.5))*50, cos(degToRad(8.5))*50, 0.5, false, 20, 127);
   fourBar.claw.close();
@@ -128,7 +129,7 @@ void Auton::leftSide(){
 
 void Auton::winPoint(){
   printConsoleText("win point");
-  odom.reset();
+  odom.reset(0, 5, 0);
   base.driveToMogo(0, 40, false, 0, 50, 0.5, false, 20, 127);
   fourBar.claw.close();
   base.driveToPoint(1, 21, 1, true, 20, 127);
@@ -172,16 +173,19 @@ void Auton::winPoint(){
 }
 
 void Auton::rightMiddle(){
-  odom.reset();
+  long start = pros::millis();
+  odom.reset(0, 5, 0);
   base.driveToMogo(0, 40, false, 0, 50, 0.5, false, 20, 127);
   fourBar.claw.close();
-  base.driveToPoint(1, 30, 1, true, 20, 127, true, false);
+  base.driveToPoint(-4, 30, 1, true, 20, 127, true, false);
   fourBar.claw.open();
-  double mogoX = odom.getX() + 13.5*sin(10);
-  double mogoY = odom.getY() + 13.5*cos(10);
-  base.driveToPoint(1, 12, 1, true, 20, 127);
-  base.turnToPoint(-25, 39);
-  base.driveToMogo(-25, 39, false, -30, 44, 0.5, false, 20, 127);
+  double mogoX = odom.getX() + 15*sin(odom.getA());
+  double mogoY = odom.getY() + 15*cos(odom.getA());
+  base.driveToPoint(-4, 12, 1, true, 20, 127);
+  base.turnToPoint(-21, 39);
+  base.driveToMogo(-21, 39, false, -30, 44, 0.5, false, 20, 127);
+  printBrain(2, odom.getX());
+  printBrain(3, odom.getY());
   fourBar.claw.close();
   base.driveToPoint(1, 21, 1, true, 20, 127);
   fourBar.claw.open();
@@ -195,17 +199,19 @@ void Auton::rightMiddle(){
   twoBar.close();
   pros::delay(300);
   base.setDrive(0, 0);
-  base.turnToAngle(mogoX, mogoY);
-  base.driveToMogo(mogoX, mogoY, true, mogoX - 10, mogoY + 10, 0.5, false, 20, 127);
+  base.turnToPoint(mogoX, mogoY);
+  base.driveToMogo(mogoX, mogoY, true, mogoX - 10, mogoY + 10, 0.5, false, 20, 70, true, true, false);
   fourBar.claw.close();
   fourBar.setState(LiftTargets::score);
   rollers.setState(RollersState::smart);
-  // base.turnToAngle(0);
-  // pros::delay(200);
-  // base.driveToPoint(11, 55, 1, false, 20, 40);
-  // base.driveToPoint(11, 5, 1, true, 20, 60);
-  // base.turnToAngle(90);
-  // fourBar.setState(LiftTargets::down);
+  pros::delay(200);
+  base.turnToPoint(11, -8);
+  base.driveToPoint(11, -8, 1, false, 20, 60);
+  base.driveToPoint(11, 5, 1, true, 20, 60);
+  base.turnToAngle(90);
+  fourBar.setState(LiftTargets::down);
+  long duration = pros::millis() - start;
+  printBrain(2, duration);
 }
 
 void Auton::middleFromLeft(){
