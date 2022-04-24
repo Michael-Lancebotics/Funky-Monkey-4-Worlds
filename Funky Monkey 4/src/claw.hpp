@@ -5,8 +5,10 @@
 #define FRONT_CLAW_ALIGNER_LOCAL_Y_OFFSET 2
 #define BACK_CLAW_ALIGNER_LOCAL_Y_OFFSET 3.5
 
-#define FRONT_CLAW_GRAB_DISTANCE 20
-#define BACK_CLAW_GRAB_DISTANCE 40
+#define FRONT_CLAW_MAX_GRAB_DISTANCE 20
+#define FRONT_CLAW_MIN_GRAB_DISTANCE 0
+#define BACK_CLAW_MAX_GRAB_DISTANCE 38
+#define BACK_CLAW_MIN_GRAB_DISTANCE 10
 
 class Claw{
 private:
@@ -15,17 +17,19 @@ private:
   Distance distance;
   Distance leftAlignerDistance;
   Distance rightAlignerDistance;
-  int grabDistance;
+  int maxGrabDistance;
+  int minGrabDistance;
 
 public:
   Claw(){}
-  Claw(Piston ipiston, Distance idistance, Distance ileftAlignerDistance, Distance irightAlignerDistance, double ilocalYAlignerOffset, double igrabDistance){
+  Claw(Piston ipiston, Distance idistance, Distance ileftAlignerDistance, Distance irightAlignerDistance, double ilocalYAlignerOffset, int iminGrabDistance, int imaxGrabDistance){
     piston = ipiston;
     distance = idistance;
     leftAlignerDistance = ileftAlignerDistance;
     rightAlignerDistance = irightAlignerDistance;
     localYAlignerOffset = ilocalYAlignerOffset;
-    grabDistance = igrabDistance;
+    minGrabDistance = iminGrabDistance;
+    maxGrabDistance = imaxGrabDistance;
   }
 
   PistonState getState(){

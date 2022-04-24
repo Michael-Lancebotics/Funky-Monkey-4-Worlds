@@ -159,7 +159,7 @@ void Auton::winPoint(){
   base.turnToAngle(90, true, 30, 60);
   // fourBar.setState(LiftTargets::hover);
   pros::delay(500);
-  base.driveToMogo(-75, odom.getY(), true, -60, odom.getY(), 3, true, 20, 60);
+  base.driveToMogo(-75, odom.getY(), true, -60, odom.getY(), 0.5, true, 20, 60);
   base.setDrive(-20, 0);
   pros::delay(200);
   twoBar.close();
@@ -182,8 +182,8 @@ void Auton::rightMiddle(){
   double mogoX = odom.getX() + 15*sin(odom.getA());
   double mogoY = odom.getY() + 15*cos(odom.getA());
   base.driveToPoint(-4, 12, 1, true, 20, 127);
-  base.turnToPoint(-21, 39);
-  base.driveToMogo(-21, 39, false, -30, 44, 0.5, false, 20, 127);
+  base.turnToPoint(-19, 39);
+  base.driveToMogo(-19, 39, false, -30, 44, 0.5, false, 20, 127);
   printBrain(2, odom.getX());
   printBrain(3, odom.getY());
   fourBar.claw.close();

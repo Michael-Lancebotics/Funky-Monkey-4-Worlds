@@ -521,9 +521,9 @@ void Base::driveToMogo(double mogoX, double mogoY, bool correct, double itargetX
 
     localYVel = odom.getXVel() * sin(odom.getA()) + odom.getYVel() * cos(odom.getA());
 
-    if(!reverse && ((fourBar.claw.getDistance() < 172 && goFast) || (fourBar.claw.hasMogo() && !goFast))){
+    if(!reverse && (((fourBar.claw.getDistance() < 172 && fourBar.claw.getDistance() != 0) && goFast) || (fourBar.claw.hasMogo() && !goFast))){
       fourBar.claw.close();
-      printBrain(6, targetX);
+      printBrain(6, fourBar.claw.getDistance());
       printBrain(7, duration);
       // setDrive(127, 0);
       pros::delay(50);

@@ -6,7 +6,7 @@ void initialize(){
 	fourBar.hold();
 	// fourBar.setup();
 	// auton.select();
-	auton.setAuton(1);
+	auton.setAuton(5);
 	printConsole(controller.getCompetitionSwitch());
 	odom.calibrate();
 	auton.programmingSkillsSetup();
@@ -23,4 +23,9 @@ void autonomous(){
 void opcontrol(){
 	// auton.stop();
 	driveControl.start();
+	while(true){
+		printConsole(twoBar.hasMogo());
+		printConsole(twoBar.getDistance());
+		pros::delay(DELAY_TIME);
+	}
 }
