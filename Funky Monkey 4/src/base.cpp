@@ -37,7 +37,7 @@ double Base::getVelocity(){
   return vel / 6;
 }
 
-void Base::arcToPoint(double itargetX, double itargetY, double itargetA, double maxErrorRadius, bool reverse, int iminSpeed, int imaxSpeed, bool accelerate, bool decelerate){
+void Base::arcToPoint(double itargetX, double itargetY, double itargetA, double maxErrorRadius, bool reverse, int iminSpeed, int imaxSpeed, bool accelerate, bool decelerate, double bw){
   targetX = itargetX;
   targetY = itargetY;
   targetA = angleInRange(degToRad(itargetA));
@@ -50,8 +50,8 @@ void Base::arcToPoint(double itargetX, double itargetY, double itargetA, double 
   double centreY = radius * cos(odom.getA() + degToRad(90)*-boolToSgn(reverse));
   double initialRadiusToInitialCentre = findDist(odom.getX(), odom.getY(), centreX, centreY);
   double radiusToInitialCentre = findDist(odom.getX(), odom.getY(), centreX, centreY);
-  double innerRadius = radius - BASE_WIDTH/2;
-  double outterRadius = radius + BASE_WIDTH/2;
+  double innerRadius = radius - bw/2;
+  double outterRadius = radius + bw/2;
   double innerRatio = (innerRadius/radius);
   double outterRatio = (outterRadius/radius);
   double pwrY = findPwrY(cordLength, totalErrorInitial, imaxSpeed, iminSpeed, accelerate, decelerate)*-boolToSgn(reverse);
@@ -72,8 +72,8 @@ void Base::arcToPoint(double itargetX, double itargetY, double itargetA, double 
     cordLength = findDist(odom.getX(), odom.getY(), targetX, targetY);
     cordAngle = findAngle(odom.getX(), odom.getY(), targetX, targetY);
     radius = (cordLength/2) / (sin((targetA - odom.getA()) / 2));
-    innerRadius = radius - (BASE_WIDTH/2);
-    outterRadius = radius + (BASE_WIDTH/2);
+    innerRadius = radius - (bw/2);
+    outterRadius = radius + (bw/2);
     innerRatio = (innerRadius/radius);
     outterRatio = (outterRadius/radius);
     minSpeed = iminSpeed / innerRatio;
@@ -82,16 +82,19 @@ void Base::arcToPoint(double itargetX, double itargetY, double itargetA, double 
     radiusToInitialCentre = findDist(odom.getX(), odom.getY(), centreX, centreY);
 
     pwrY = pwrY = findPwrY(cordLength, totalErrorInitial, imaxSpeed, iminSpeed, accelerate, decelerate)*-boolToSgn(reverse);
+    if(!decelerate){
+      pwrY = maxSpeed*sgn(pwrY);
+    }
     pwrA = (((pwrY * outterRatio) - (pwrY * innerRatio)))*-boolToSgn(reverse);
 
     errorRadius = initialRadiusToInitialCentre - radiusToInitialCentre;
 
-    if(fabs(errorRadius) > maxErrorRadius){
-      radiusCorrection = sgn(errorRadius)*setMin(fabs(errorRadius) * 3, 20);
-    }
-    else{
+    // if(fabs(errorRadius) > maxErrorRadius){
+    //   radiusCorrection = sgn(errorRadius)*setMin(fabs(errorRadius) * 3, 20);
+    // }
+    // else{
       radiusCorrection = 0;
-    }
+    // }
 
     printConsole(radiusCorrection);
     printConsole(centreX);
@@ -307,7 +310,7 @@ void Base::driveToDistance(double targetDistance, double itargetA, double maxErr
 }
 
 //drives to point in main task
-void Base::turnToPoint(double itargetX, double itargetY, bool reverse, int minSpeed, int maxSpeed, bool accelerate, bool decelerate){//drive to point in the main task
+void Base::turnToPoint(double itargetX, double itargetY, bool reverse, int minSpeed, int maxSpeed, bool accelerate, bool decelerate, bool accurate){//drive to point in the main task
   targetX = itargetX;
   targetY = itargetY;
   double pwrA = 0;
@@ -319,7 +322,7 @@ void Base::turnToPoint(double itargetX, double itargetY, bool reverse, int minSp
 
   double initError = radToDeg(errorAngle);
 
-  while(fabs(errorAngle) > degToRad(1) && (!controller.getPress(X) || controller.getInAutonomous()) && duration < 3000){
+  while(fabs(errorAngle) > degToRad(accurate ? 1 : 8) && (!controller.getPress(X) || controller.getInAutonomous()) && duration < 3000){
     errorAngle = angleInRange(findAngle(odom.getX(), odom.getY(), targetX, targetY) - odom.getA() + (reverse ? M_PI : 0));
 
     pwrA = findPwrA(errorAngle, minSpeed, maxSpeed, initError)*sgn(errorAngle);
@@ -535,6 +538,10 @@ void Base::driveToMogo(double mogoX, double mogoY, bool correct, double itargetX
       break;
     }
 
+    if(!decelerate){
+      pwrY = maxSpeed*sgn(pwrY);
+    }
+
     setDrive(pwrY, pwrA);
 
     now = pros::millis();
@@ -543,7 +550,9 @@ void Base::driveToMogo(double mogoX, double mogoY, bool correct, double itargetX
     pros::delay(DELAY_TIME);
   }
   //stopping the drive
-  setDrive(0, 0);
+  if(decelerate){
+    setDrive(0, 0);
+  }
 }
 
 void Base::turnToMogo(double mogoX, double mogoY, bool reverse, int minSpeed, int maxSpeed, bool accelerate, bool decelerate){

@@ -55,15 +55,30 @@ void Auton::rollerController(){
 }
 
 void Auton::programmingSkills(){
+  long start = pros::millis();
   odom.reset(11.75, 115.5, 0);
-  // transmission.fourBar.claw.open();
-  base.driveToDistance(-2.5, 0, 5, true, 60);
-  // transmission.fourBar.claw.close();
-  base.arcToPoint(39.22, 126.4, 128, 1, false, 20, 127, true, false);
-  base.driveToPoint(61, 112, 1, false, 20, 127, false, false);
+  fourBar.claw.open();
+  fourBar.setState(LiftTargets::hover);
+  base.driveToMogo(11.75, 110.5, false, 11.75, 110.5, 0.5, true, 20, 127, true, true, false);
+  twoBar.close();
+  pros::delay(100);
+  rollers.setState(RollersState::smart);
+  base.arcToPoint(35.5, 126, 115, 1, false, 20, 127, true, true, 9);//tune basewidth if inconsistent with decel
+  fourBar.setState(LiftTargets::down);
+  base.driveToMogo(70.95, 110.12, true, 78.97, 106.04, 1, false, 20, 127, true, true, true);
   fourBar.claw.close();
   fourBar.setState(LiftTargets::score);
-  // base.arcToPoint(39.22, 126.4, 128, 1, false, 20, 127, false, true);
+  base.arcToPoint(98.7, 89.6, 180, 1, false, 20, 127, true, true, BASE_WIDTH);
+  base.driveToPoint(100, 61, 1);
+  base.driveToPoint(100, 73.5, 1, true);
+  base.turnToPoint(116, 73.5, false);
+  // base.turnToPoint(125, 76.5, false, 80, 20);
+  base.turnToPoint(125, 73.5, false, 80, 20, true, true, false);
+  base.driveToPoint(115, 73.5, 1);
+  fourBar.claw.open();
+  long duration = pros::millis() - start;
+  printBrain(3, duration);
+  base.driveToPoint(100, 73.5, 1, true);
 }
 
 void Auton::rightSide(){

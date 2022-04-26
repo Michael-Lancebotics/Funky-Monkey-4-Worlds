@@ -6,25 +6,33 @@ void Rollers::move(int pwr){
 
 void Rollers::run(){
   int stuckTime = 0;
+  bool wasRunning = false;
   while(true){
     switch(state){
       case RollersState::stop:
       rollers.move(0);
       stuckTime = 0;
+      wasRunning = false;
       break;
 
       case RollersState::start:
       rollers.move(127);
       stuckTime = 0;
+      wasRunning = false;
       break;
 
       case RollersState::reverse:
       rollers.move(-127);
       stuckTime = 0;
+      wasRunning = false;
       break;
 
       case RollersState::smart:
       if(twoBar.getState() == PistonState::extend && twoBar.hasMogo() && fourBar.getState() != LiftTargets::down){//FourBarRotation.get_position() > -20400 &&
+        if(!wasRunning){
+          pros::delay(500);
+          wasRunning = true;
+        }
         rollers.move(127);
         if(abs(rollers.getActualSpeed()) < 10){
           stuckTime += 1;
@@ -39,6 +47,7 @@ void Rollers::run(){
       }
       else{
         rollers.move(0);
+        wasRunning = false;
       }
       break;
     }

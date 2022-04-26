@@ -7,7 +7,7 @@
 #define FOUR_BAR_PORT 5, false
 #define ROLLER_PORT 16, true
 
-#define FRONT_CLAW_PORT 6, false
+#define FRONT_CLAW_PORT 6, true
 #define TWO_BAR_PORT 5, true
 
 #define SELECTOR_PORT 8

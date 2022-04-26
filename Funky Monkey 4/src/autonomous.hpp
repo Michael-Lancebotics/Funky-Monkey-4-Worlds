@@ -3,7 +3,6 @@
 
 class Auton{
 private:
-  static void programmingSkills();
   static void rightSide();
   static void middleFromRight();
   static void middleFromLeft();
@@ -28,6 +27,8 @@ public:
     autons = {rightSide, leftSide, middleFromRight, middleFromLeft, winPoint, rightMiddle};
     autonNames = {"rightSide", "leftSide", "middleFromRight", "middleFromLeft", "winPoint", "rightMiddle"};
   }
+
+  void programmingSkills();
 
   void setAuton(int iauton){
     auton = iauton;
