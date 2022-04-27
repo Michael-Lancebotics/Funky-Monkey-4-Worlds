@@ -74,11 +74,40 @@ void Auton::programmingSkills(){
   base.turnToPoint(116, 73.5, false);
   // base.turnToPoint(125, 76.5, false, 80, 20);
   base.turnToPoint(125, 73.5, false, 80, 20, true, true, false);
-  base.driveToPoint(115, 73.5, 1);
+  base.driveToPoint(113, 73.5, 1);
+  base.setDrive(50, 0);
+  fourBar.setState(LiftTargets::platform);
+  pros::delay(500);
   fourBar.claw.open();
+  base.setDrive(-50, 0);
+  pros::delay(500);
+  fourBar.setState(LiftTargets::score);
+  base.driveToPoint(105, 73.5, 1, true);
+  fourBar.setState(LiftTargets::down);
+  base.turnToPoint(84.35, 77.78, false, 50, 20, true, true, false);
+  base.driveToMogo(72.66, 74.14, true, 64.93, 72.07, 1, false, 20, 60, true, true, false);
+  fourBar.claw.close();
+  fourBar.setState(LiftTargets::score);
+  pros::delay(500);
+  // base.arcToPoint(37.72, 56.54, -135, 1, false, 20, 127, true, true, 7);
+  base.turnToPoint(125, 73.5, false, 20, 60, true, true, false);
+  base.driveToPoint(113, 70.5, 1, false, 20, 60);
+  base.setDrive(50, 0);
+  fourBar.setState(LiftTargets::platform);
+  pros::delay(500);
+  fourBar.claw.open();
+  base.setDrive(-50, 0);
+  pros::delay(500);
+  fourBar.setState(LiftTargets::score);
+  pros::delay(500);
+  // base.driveToPoint(105, 73.5, 1, true);
+  base.turnToPoint(40, 73.5, false, 20, 80, true, true, false);
+  twoBar.open();
+  pros::delay(500);
+  base.driveToPoint(40, 73.5, 1, false);
+
   long duration = pros::millis() - start;
   printBrain(3, duration);
-  base.driveToPoint(100, 73.5, 1, true);
 }
 
 void Auton::rightSide(){

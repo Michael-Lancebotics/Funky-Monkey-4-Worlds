@@ -5,10 +5,11 @@ void initialize(){
 	base.hold();
 	fourBar.hold();
 	twoBar.open();
-	
+
 	// fourBar.setup();
 	// auton.select();
 	// printConsole(controller.getCompetitionSwitch());
+	auton.setAuton(0);
 	odom.calibrate();
 	auton.programmingSkillsSetup();
 }
