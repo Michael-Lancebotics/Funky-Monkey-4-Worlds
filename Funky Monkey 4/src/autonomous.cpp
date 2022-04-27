@@ -105,13 +105,25 @@ void Auton::programmingSkills(){
   // fourBar.move(10);
   // fourBar.setState(LiftTargets::platform);
   base.turnToAngle(180, true, 40, 127);
+  base.driveToPoint(41, 45, 1, false, 20, 70);
   fourBar.setState(LiftTargets::down);
   fourBar.claw.open();
   base.driveToMogo(41, 10, true, 41, 0, 1, true, 20, 80, true, true);
+  base.setDrive(-50, 0);
+  pros::delay(200);
   twoBar.close();
+  pros::delay(200);
+  base.setDrive(0, 0);
+  base.driveToPoint(41, 34, 1, false, 20, 70);
+
   fourBar.setState(LiftTargets::score);
-  pros::delay(100);
-  base.driveToPoint(45, 30, 1, false);
+  base.turnToAngle(270, false, 20, 127);
+  base.driveToPoint(17, 34, 0, false, 20, 70);
+  base.setDrive(127, 0);
+  pros::delay(500);
+  base.setDrive(0, 0);
+  pros::delay(1250);
+  odom.wallReset(true);
 
   // base.driveToMogo(39, 18.5, false, 38, 23.5, 0.5, true, 20, 127, true, true, false);
   // twoBar.close();
