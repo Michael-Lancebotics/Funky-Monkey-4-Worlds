@@ -60,29 +60,48 @@ void Odometry::calibrate(){
   start();
 }
 
-void Odometry::wallReset(bool front){
+void Odometry::wallReset(bool front, int wall, bool useLeft){
   stop();
   double angle;
-  bool useLeft = (left.getDistance() < right.getDistance() && left.getDistance() > 0) || right.getDistance() == 0;
-  double localX = milimetersToInches(useLeft ? left.getFilteredDistance() : right.getFilteredDistance());
-  double localXOffset = useLeft ? 7.125 : -7.125;
-  double localYOffset = 7.5;
-  if(angleInRange(a) > degToRad(-45) && angleInRange(a) < degToRad(45)){
-    angle = degToRad(0);
-    reset((front == useLeft ? localX : 143 - localX) + (front ? localXOffset : -localXOffset), (front ? 0 + 143 - localYOffset : localYOffset), angle);
+  double x;
+  double y;
+  // bool useLeft = (left.getDistance() < right.getDistance() && left.getDistance() > 0) || right.getDistance() == 0;
+  // double localX = milimetersToInches(useLeft ? left.getFilteredDistance() : right.getFilteredDistance());
+  // double localXOffset = useLeft ? 7.125 : -7.125;
+  // double localYOffset = 7.5;
+  // if(angleInRange(a) > degToRad(-45) && angleInRange(a) < degToRad(45)){
+  //   angle = degToRad(0);
+  //   reset((front == useLeft ? localX : 143 - localX) + (front ? localXOffset : -localXOffset), (front ? 0 + 143 - localYOffset : localYOffset), angle);
+  // }
+  // else if(angleInRange(a) > degToRad(45) && angleInRange(a) < degToRad(135)){
+  //   angle = degToRad(90);
+  //   reset((front ? 0 + 143 - localYOffset : localYOffset), (front == useLeft ? localX : 143 - localX) + (front ? localXOffset : -localXOffset), angle);
+  // }
+  // else if(angleInRange(a) > degToRad(135) && angleInRange(a) < degToRad(-135)){
+  //   angle = degToRad(180);
+  //   reset((front == useLeft ? localX : 143 - localX) + (front ? localXOffset : -localXOffset), (front ? 0 + 143 - localYOffset : localYOffset), angle);
+  // }
+  // else{
+  //   angle = degToRad(-90);
+  //   reset((front ? 0 + 143 - localYOffset : localYOffset), (front == useLeft ? localX : 143 - localX) + (front ? localXOffset : -localXOffset), angle);
+  // }
+  if(wall == 1){
+    angle = 0;
+    if(useLeft){
+
+    }
   }
-  else if(angleInRange(a) > degToRad(45) && angleInRange(a) < degToRad(135)){
-    angle = degToRad(90);
-    reset((front ? 0 + 143 - localYOffset : localYOffset), (front == useLeft ? localX : 143 - localX) + (front ? localXOffset : -localXOffset), angle);
+  else if(wall == 2){
+    angle = 90;
   }
-  else if(angleInRange(a) > degToRad(135) && angleInRange(a) < degToRad(-135)){
-    angle = degToRad(180);
-    reset((front == useLeft ? localX : 143 - localX) + (front ? localXOffset : -localXOffset), (front ? 0 + 143 - localYOffset : localYOffset), angle);
+  else if(wall == 3){
+    angle = 180;
   }
-  else{
-    angle = degToRad(-90);
-    reset((front ? 0 + 143 - localYOffset : localYOffset), (front == useLeft ? localX : 143 - localX) + (front ? localXOffset : -localXOffset), angle);
+  else if(wall == 4){
+    angle = 270;
   }
+  angle = front ? angle : angle + 180;
+  reset();
   start();
 }
 

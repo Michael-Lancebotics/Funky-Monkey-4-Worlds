@@ -118,18 +118,29 @@ void Auton::programmingSkills(){
 
   fourBar.setState(LiftTargets::score);
   base.turnToAngle(270, false, 20, 127);
-  base.driveToPoint(17, 34, 0, false, 20, 70);
+  base.driveToPoint(17, 34, 1, false, 20, 50);
   base.setDrive(127, 0);
   pros::delay(500);
   base.setDrive(0, 0);
   pros::delay(1250);
-  odom.wallReset(true);
+
+  long duration = pros::millis() - start;
+  printBrain(3, duration);
+
+
+  odom.reset(17, milimetersToInches(odom.left.getFilteredDistance()) + 5.75);
+
+
+
+
+
+
+
+
 
   // base.driveToMogo(39, 18.5, false, 38, 23.5, 0.5, true, 20, 127, true, true, false);
   // twoBar.close();
   // pros::delay(100);
-  long duration = pros::millis() - start;
-  printBrain(3, duration);
 }
 
 void Auton::rightSide(){

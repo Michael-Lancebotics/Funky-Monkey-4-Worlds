@@ -15,17 +15,17 @@ private:
   TrackingWheel xWheel;
   TrackingWheel yWheel;
 
+
+  pros::Task *updateTask = nullptr;
+  pros::Task *distanceFilterTask = nullptr;
+
+public:
   Distance left;
   Distance right;
   Distance frontLeft;
   Distance frontRight;
   Distance backLeft;
   Distance backRight;
-
-  pros::Task *updateTask = nullptr;
-  pros::Task *distanceFilterTask = nullptr;
-
-public:
   Inertial inertial;
 
   Odometry(TrackingWheel ixWheel, TrackingWheel iyWheel, Inertial iinertial, Distance ileft, Distance iright, Distance ifrontLeft, Distance ifrontRight, Distance ibackLeft, Distance ibackRight){
@@ -91,7 +91,7 @@ public:
   void reset(double ix, double iy, double ia);
   void reset(double ix, double iy);
   void reset();
-  void wallReset(bool front);
+  void wallReset(bool front, int wall, bool useLeft);
   void fullReset();
   double filter(const double& currentVal, const double& lastVal);
   void calibrate();
