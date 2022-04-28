@@ -325,7 +325,7 @@ void Base::turnToPoint(double itargetX, double itargetY, bool reverse, int minSp
   while(fabs(errorAngle) > degToRad(accurate ? 1 : 8) && (!controller.getPress(X) || controller.getInAutonomous()) && duration < 3000){
     errorAngle = angleInRange(findAngle(odom.getX(), odom.getY(), targetX, targetY) - odom.getA() + (reverse ? M_PI : 0));
 
-    pwrA = findPwrA(errorAngle, minSpeed, maxSpeed, initError)*sgn(errorAngle);
+    pwrA = setMin(setMax(findPwrA(errorAngle, minSpeed, maxSpeed, initError), maxSpeed), minSpeed)*sgn(errorAngle);
 
     printConsole(radToDeg(errorAngle));
     printConsole(pwrA);
@@ -413,7 +413,7 @@ double Base::findPwrA(double errorAngle, int maxSpeed, int minSpeed, double init
   double kP = 80;
   double kI = 0;
   double kD = 0;
-  int profile = round(initError/10)*10;
+  int profile = fabs(round(initError/10)*10);
   printConsole(initError);
   printConsole(profile);
   if(radToDeg(fabs(errorAngle)) > 90){

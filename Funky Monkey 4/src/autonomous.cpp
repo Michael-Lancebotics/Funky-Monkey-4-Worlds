@@ -55,7 +55,8 @@ void Auton::rollerController(){
 }
 
 void Auton::programmingSkills(){
-  long start = pros::millis();
+
+  #if false
   odom.reset(11.75, 115.5, 0);
   fourBar.claw.open();
   fourBar.setState(LiftTargets::hover);
@@ -127,20 +128,41 @@ void Auton::programmingSkills(){
   long duration = pros::millis() - start;
   printBrain(3, duration);
 
+  #endif
 
+  ///////////////////////////////temp
+
+  twoBar.close();
+  fourBar.setState(LiftTargets::score);
+  rollers.setState(RollersState::smart);
+  odom.reset(0, 0, 270);
+  pros::delay(1000);
+
+
+
+  ///////////////////////////////
+  long start = pros::millis();
+
+  // double newX = abs(milimetersToInches(odom.left.getFilteredDistance()) - 36) > 5 ? 34 : milimetersToInches(odom.left.getFilteredDistance())
   odom.reset(17, milimetersToInches(odom.left.getFilteredDistance()) + 5.75);
 
+  base.driveToPoint(41, 36, 1, true, 20, 127);
+  fourBar.setState(LiftTargets::down);
+  base.turnToPoint(80, 36, false, 20, 80);
+  printBrain(0, fourBar.claw.);
+  // base.driveToMogo(70, 36, true, 80, 36, 1, false, 20, 127, true, false, true);
+  // fourBar.setState(LiftTargets::score);
+  // base.driveToPoint(123, 57, 1, false, 20, 50);
+  // fourBar.claw.open();
+  // base.setDrive(-50, 0);
+  // pros::delay(500);
+  // base.setDrive(0, 0);
 
 
 
 
 
 
-
-
-  // base.driveToMogo(39, 18.5, false, 38, 23.5, 0.5, true, 20, 127, true, true, false);
-  // twoBar.close();
-  // pros::delay(100);
 }
 
 void Auton::rightSide(){
