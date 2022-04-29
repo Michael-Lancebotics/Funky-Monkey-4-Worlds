@@ -650,24 +650,20 @@ double Base::getActualPwrA(){
 
 
 void Base::climb(){
-  double startX = odom.getX();
-  double startY = odom.getY();
-  double startA = odom.getA();
-
-  while(odom.getX() - startX < 2){
-    base.setDrive(-30, 0);
-  }
-  while(odom.getA() - startX < degToRad(88)){
-    base.setDrive(-30, 0);
-  }
-  while(twoBar.getAverageDistance() < 500){
-    base.setDrive(40 * sgn(500 - twoBar.getAverageDistance()), 0);
+  while(abs(770 - twoBar.getAverageDistance()) < 50){
+    setDrive(50 * sgn(770 - twoBar.getAverageDistance()), 0);
   }
   fourBar.setState(LiftTargets::down);
-  pros::delay(1000);
-  // while(){
-  //
-  // }
+  pros::delay(500);
+  while(fabs(odom.inertial.getRoll()) < 15){
+    setDrive(127, 0);
+  }
+  while(fabs(odom.inertial.getRoll()) > 15){
+    setDrive(80, 0);
+  }
+  while(fabs(odom.inertial.getRoll()) < 15){
+    setDrive(0, 0);
+  }
 }
 // void Base::driveToPlatform(bool red, int position){
 //

@@ -55,6 +55,10 @@ void Auton::rollerController(){
 }
 
 void Auton::programmingSkills(){
+  fourBar.setState(LiftTargets::score);
+  pros::delay(500);
+  base.climb();
+  return;
   // twoBar.close();
   // pros::delay(1000);
   // base.turnToPoint(0, -100, false, 20, 127, true, true, true, true);
@@ -164,8 +168,9 @@ void Auton::programmingSkills(){
   base.driveToMogo(75, 36, true, 80, 36, 1, false, 20, 90, true, false, false);
   fourBar.claw.close();
   fourBar.setState(LiftTargets::score);
-  base.driveToPoint(123, 57, 1, false, 20, 50);
+  base.driveToPoint(123, 61, 1, false, 20, 50);
   fourBar.claw.open();
+  pros::delay(300);
   base.driveToPoint(118, 50, 1, true, 20, 50);
   base.turnToPoint(odom.getX(), 10000000000000000, false, 20, 80, true, true, true);
   fourBar.setState(LiftTargets::down);
@@ -266,6 +271,8 @@ void Auton::programmingSkills(){
   base.setDrive(127, 0);
   pros::delay(500);
   base.setDrive(0, 0);
+  base.turnToAngle(0, false);
+  base.climb();
   long duration = pros::millis() - start;
   printBrain(3, duration);
 }

@@ -25,11 +25,11 @@ public:
   }
 
   double getRawPitch(){
-    return pros::IMU(port).get_pitch();
+    return pros::IMU(port).get_roll();
   }
 
   double getRawRoll(){
-    return pros::IMU(port).get_roll();
+    return pros::IMU(port).get_pitch();
   }
 
   double getRotation(){
