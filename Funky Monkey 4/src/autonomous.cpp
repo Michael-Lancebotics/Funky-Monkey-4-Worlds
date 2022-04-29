@@ -55,8 +55,13 @@ void Auton::rollerController(){
 }
 
 void Auton::programmingSkills(){
+  // twoBar.close();
+  // pros::delay(1000);
+  // base.turnToPoint(0, -100, false, 20, 127, true, true, true, true);
+  // return;
+  long start = pros::millis();
 
-  #if false
+  // #if false
   odom.reset(11.75, 115.5, 0);
   fourBar.claw.open();
   fourBar.setState(LiftTargets::hover);
@@ -125,44 +130,144 @@ void Auton::programmingSkills(){
   base.setDrive(0, 0);
   pros::delay(1250);
 
-  long duration = pros::millis() - start;
-  printBrain(3, duration);
 
-  #endif
+  // #endif
 
   ///////////////////////////////temp
 
-  twoBar.close();
-  fourBar.setState(LiftTargets::score);
-  rollers.setState(RollersState::smart);
-  odom.reset(0, 0, 270);
-  pros::delay(1000);
+  // twoBar.close();
+  // fourBar.setState(LiftTargets::score);
+  // rollers.setState(RollersState::smart);
+  // odom.reset(0, 0, 270);
+  // pros::delay(1000);
 
 
 
   ///////////////////////////////
-  long start = pros::millis();
+  // long start = pros::millis();
 
   // double newX = abs(milimetersToInches(odom.left.getFilteredDistance()) - 36) > 5 ? 34 : milimetersToInches(odom.left.getFilteredDistance())
   odom.reset(17, milimetersToInches(odom.left.getFilteredDistance()) + 5.75);
 
   base.driveToPoint(41, 36, 1, true, 20, 127);
   fourBar.setState(LiftTargets::down);
-  base.turnToPoint(80, 36, false, 20, 80);
-  printBrain(0, fourBar.claw.);
-  // base.driveToMogo(70, 36, true, 80, 36, 1, false, 20, 127, true, false, true);
-  // fourBar.setState(LiftTargets::score);
-  // base.driveToPoint(123, 57, 1, false, 20, 50);
-  // fourBar.claw.open();
-  // base.setDrive(-50, 0);
-  // pros::delay(500);
+  base.turnToPoint(80, 36, false, 20, 90, true, true, true);
+  base.turnToPoint(80, 36, false, 20, 90, true, true, true);
+  // double ex = fourBar.claw.getExpectedDistance(75, 36) + 5;
+  // double acL = milimetersToInches(fourBar.claw.leftAlignerDistance.getDistance());
+  // double acR = milimetersToInches(fourBar.claw.rightAlignerDistance.getDistance());
+  // printBrain(3, ex);
+  // printBrain(5, acL);
+  // printBrain(7, acR);
+  double errA = radToDeg(findAngle(odom.getX(), odom.getY(), 80, 36) - odom.getA());
+  printBrain(0, errA);
+  base.driveToMogo(75, 36, true, 80, 36, 1, false, 20, 90, true, false, false);
+  fourBar.claw.close();
+  fourBar.setState(LiftTargets::score);
+  base.driveToPoint(123, 57, 1, false, 20, 50);
+  fourBar.claw.open();
+  base.driveToPoint(118, 50, 1, true, 20, 50);
+  base.turnToPoint(odom.getX(), 10000000000000000, false, 20, 80, true, true, true);
+  fourBar.setState(LiftTargets::down);
+  base.driveToPoint(118, 35, 1, true, 20, 50);
+  twoBar.open();
+  pros::delay(200);
+  base.turnToPoint(odom.getX(), 10000000000000000, false, 20, 127, true, true, false);
+  double mogo1X = odom.getX() - sin(odom.getA())*16.5;
+  double mogo1Y = odom.getY() - cos(odom.getA())*16.5;
+  bool leftDetect = milimetersToInches(fourBar.claw.leftAlignerDistance.getDistance()) < 65;
+  bool rightDetect = milimetersToInches(fourBar.claw.rightAlignerDistance.getDistance()) < 65;
+  double mogo2X = odom.getX();
+  double mogo2Y = odom.getY() + 26;
+  if(leftDetect && rightDetect){
+    printBrainText(5, "both");
+    mogo2X = odom.getX() + (sin(odom.getA()) * (milimetersToInches(fourBar.claw.getAverageDistance()) + FRONT_CLAW_ALIGNER_LOCAL_Y_OFFSET + 5));
+    mogo2Y = odom.getY() + (cos(odom.getA()) * (milimetersToInches(fourBar.claw.getAverageDistance()) + FRONT_CLAW_ALIGNER_LOCAL_Y_OFFSET + 5));
+  }
+  else if(leftDetect){
+    printBrainText(5, "left");
+    mogo2X = odom.getX() + (sin(odom.getA()) * (milimetersToInches(fourBar.claw.leftAlignerDistance.getDistance()) + FRONT_CLAW_ALIGNER_LOCAL_Y_OFFSET + 5)) - (cos(odom.getA()) * 5);
+    mogo2Y = odom.getY() + (cos(odom.getA()) * (milimetersToInches(fourBar.claw.leftAlignerDistance.getDistance()) + FRONT_CLAW_ALIGNER_LOCAL_Y_OFFSET + 5)) - (sin(odom.getA()) * 5);
+  }
+  else if(rightDetect){
+    printBrainText(5, "right");
+    mogo2X = odom.getX() + (sin(odom.getA()) * (milimetersToInches(fourBar.claw.rightAlignerDistance.getDistance()) + FRONT_CLAW_ALIGNER_LOCAL_Y_OFFSET + 5)) + (cos(odom.getA()) * 5);
+    mogo2Y = odom.getY() + (cos(odom.getA()) * (milimetersToInches(fourBar.claw.rightAlignerDistance.getDistance()) + FRONT_CLAW_ALIGNER_LOCAL_Y_OFFSET + 5)) + (sin(odom.getA()) * 5);
+  }
+  double mogoTargetX = mogo2X + 10 * sin(findAngle(odom.getX(), odom.getY(), mogo2X, mogo2Y));
+  double mogoTargetY = mogo2Y + 10 * cos(findAngle(odom.getX(), odom.getY(), mogo2X, mogo2Y));
+  printBrain(3, mogo2X);
+  printBrain(4, mogo2Y);
+  printBrain(6, mogoTargetX);
+  printBrain(7, mogoTargetY);
+  base.driveToMogo(mogo2X, mogo2Y, true, mogoTargetX, mogoTargetY, 1, false, 20, 127, true, true, false);
+  fourBar.claw.close();
+  pros::delay(100);
+  fourBar.setState(LiftTargets::score);
+  base.driveToPoint(118, 88, 1, false, 20, 50);
+  // while(fourBar.atPosition(LiftTargets::score)){pros::delay(5);}
+  pros::delay(300);
+  base.turnToAngle(90);
+  base.driveToPoint(123, 82, 1, false, 20, 50);
+  fourBar.claw.open();
+  base.driveToPoint(114, 82, 1, true, 20, 50);
+  fourBar.setState(LiftTargets::down);
+  base.turnToPoint(mogo1X, mogo1Y);
+  base.driveToMogo(mogo1X, mogo1Y, true, mogo1X, mogo1Y + 10, 1, false, 20, 127, true, true, false);
+  fourBar.claw.close();
+  fourBar.setState(LiftTargets::score);
+  base.driveToPoint(114, 73, 1, true, 20, 50);
+  base.turnToAngle(90);
+  // base.driveToPoint(121, 73, 1, false, 20, 50);
+  base.setDrive(70, 0);
+  pros::delay(700);
+  fourBar.claw.open();
+  base.driveToPoint(118, 73, 1, true, 20, 50);
+  base.turnToPoint(118, 126, true, 20, 127, true, true, false);
+  base.driveToMogo(118, 126, true, 118, 136, 1, true, 20, 127, true, true, false);
+  base.setDrive(-20, 0);
+  pros::delay(500);
+  twoBar.close();
+  pros::delay(200);
+  base.setDrive(0, 0);
+  fourBar.setState(LiftTargets::hover);
+  base.driveToPoint(118, 28, 1, false, 20, 127);
+  fourBar.setState(LiftTargets::down);
+  // base.driveToPoint(118, 118.5, 1, false, 20, 50);
+  // base.turnToPoint(81, 118.5, false, 20, 127, true, true, false);
+  // base.driveToPoint(81, 118.5, 1, false, 20, 50);
+  // base.turnToPoint(81, 38.5, false, 20, 127, true, true, false);
+  // base.driveToPoint(81, 48.5, 1, false, 20, 70, true, false);
+  // twoBar.open();
+  // double mogo3X = odom.getX() - sin(odom.getA())*16.5;
+  // double mogo3Y = odom.getY() - cos(odom.getA())*16.5;
+  // base.driveToPoint(81, 28.5, 1, false, 20, 70);
+  // base.turnToPoint(140.5, 28.5, true, 20, 127, true, true, false);
+  // base.driveToPoint(140.5, 28.5, 1, true, 20, 70);
+  base.turnToPoint(140.5, 45, false, 20, 127, true, true, false);
+  base.driveToMogo(140.5, 45, true, 140.5, 55, 1, false, 20, 50, true, true, false);
+  fourBar.claw.close();
+  // base.setDrive(-20, 0);
+  // pros::delay(200);
+  // twoBar.close();
+  // pros::delay(200);
   // base.setDrive(0, 0);
+  base.driveToPoint(118, 28, 1, true, 20, 127);
+  fourBar.setState(LiftTargets::score);
+  base.turnToPoint(20, 28, false, 20, 127, true, true, false);
+  base.driveToPoint(20, 28, 1, false, 20, 70);
+  // base.turnToPoint(mogo3X, mogo3Y, false, 20, 127, true, true, false);
+  // base.driveToMogo(mogo3X, mogo3Y, false, mogo3X + sin(odom.getA())*10, mogo3Y + cos(odom.getA())*10, 1, true, 20, 127, true, false, true);
 
-
-
-
-
-
+  // base.driveToPoint(17, 34, 1, false, 20, 50);
+  base.setDrive(127, 0);
+  pros::delay(500);
+  base.setDrive(0, 0);
+  base.setDrive(127, 0);
+  pros::delay(500);
+  base.setDrive(0, 0);
+  long duration = pros::millis() - start;
+  printBrain(3, duration);
 }
 
 void Auton::rightSide(){

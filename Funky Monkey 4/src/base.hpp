@@ -45,17 +45,18 @@ class Base{
   }
 
   double findPwrY(double error, double initialError, int maxSpeed, int minSpeed, bool accel, bool decel);
-  double findPwrA(double errorAngle, int maxSpeed, int minSpeed, double initError);
+  double findPwrA(double errorAngle, int maxSpeed, int minSpeed, double initError, bool mogo);
   double findCorrection(double error, int maxSpeed, int minSpeed);
   double getVelocity();
   void setDrive(int pwrY, int pwrA);
   void driveToPoint(double itargetX, double itargetY, double maxErrorX = 1, bool reverse = false, int minSpeed = 20, int maxSpeed = 127, bool accelerate = true, bool decelerate = true);
   void driveToDistance(double targetDistance, double itargetA, double maxErrorX = 1, bool reverse = false, int minSpeed = 20, int maxSpeed = 127, bool accelerate = true, bool decelerate = true);
   void arcToPoint(double itargetX, double itargetY, double itargetA, double maxErrorRadius = 1, bool reverse = false, int iminSpeed = 20, int imaxSpeed = 127, bool accelerate = true, bool decelerate = true, double bw = BASE_WIDTH);
-  void turnToPoint(double itargetX, double itargetY, bool reverse = false, int minSpeed = 20, int maxSpeed = 127, bool accelerate = true, bool decelerate = true, bool accurate = true);
+  void turnToPoint(double itargetX, double itargetY, bool reverse = false, int minSpeed = 20, int maxSpeed = 127, bool accelerate = true, bool decelerate = true, bool accurate = true, bool mogo = false);
   void turnToAngle(double targetA, bool reverse = false, int minSpeed = 20, int maxSpeed = 127, bool accelerate = true, bool decelerate = true);
   void driveToMogo(double mogoX, double mogoY, bool correct, double itargetX, double itargetY, double maxErrorX = 1, bool reverse = false, int minSpeed = 20, int maxSpeed = 127, bool accelerate = true, bool decelerate = true, bool goFast = true);
   void turnToMogo(double mogoX, double mogoY, bool reverse = false, int minSpeed = 20, int maxSpeed = 127, bool accelerate = true, bool decelerate = true);
+  void climb();
   void hold();
   void coast();
   void brake();

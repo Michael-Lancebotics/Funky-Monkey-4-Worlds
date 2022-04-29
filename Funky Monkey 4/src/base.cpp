@@ -310,7 +310,7 @@ void Base::driveToDistance(double targetDistance, double itargetA, double maxErr
 }
 
 //drives to point in main task
-void Base::turnToPoint(double itargetX, double itargetY, bool reverse, int minSpeed, int maxSpeed, bool accelerate, bool decelerate, bool accurate){//drive to point in the main task
+void Base::turnToPoint(double itargetX, double itargetY, bool reverse, int minSpeed, int maxSpeed, bool accelerate, bool decelerate, bool accurate, bool mogo){//drive to point in the main task
   targetX = itargetX;
   targetY = itargetY;
   double pwrA = 0;
@@ -322,10 +322,10 @@ void Base::turnToPoint(double itargetX, double itargetY, bool reverse, int minSp
 
   double initError = radToDeg(errorAngle);
 
-  while(fabs(errorAngle) > degToRad(accurate ? 1 : 8) && (!controller.getPress(X) || controller.getInAutonomous()) && duration < 3000){
+  while(fabs(errorAngle) > degToRad(accurate ? 1 : 8) && (!controller.getPress(X) || controller.getInAutonomous()) && duration < 5000){
     errorAngle = angleInRange(findAngle(odom.getX(), odom.getY(), targetX, targetY) - odom.getA() + (reverse ? M_PI : 0));
 
-    pwrA = setMin(setMax(findPwrA(errorAngle, minSpeed, maxSpeed, initError), maxSpeed), minSpeed)*sgn(errorAngle);
+    pwrA = setMin(setMax(findPwrA(errorAngle, minSpeed, maxSpeed, initError, mogo), maxSpeed), minSpeed)*sgn(errorAngle);
 
     printConsole(radToDeg(errorAngle));
     printConsole(pwrA);
@@ -367,7 +367,7 @@ void Base::turnToAngle(double itargetA, bool reverse, int minSpeed, int maxSpeed
 
   while(fabs(errorAngle) > degToRad(1) && (!controller.getPress(X) || controller.getInAutonomous()) && duration < 3000){
     errorAngle = angleInRange(targetA - odom.getA() + (reverse ? M_PI : 0));
-    pwrA = setMin(setMax(findPwrA(errorAngle, minSpeed, maxSpeed, initError), maxSpeed), minSpeed)*sgn(errorAngle);
+    pwrA = setMin(setMax(findPwrA(errorAngle, minSpeed, maxSpeed, initError, false), maxSpeed), minSpeed)*sgn(errorAngle);
 
     printConsole(radToDeg(errorAngle));
     printConsole(pwrA);
@@ -409,7 +409,42 @@ double Base::findPwrY(double error, double initialError, int maxSpeed, int minSp
   // return maxSpeed;
 }
 
-double Base::findPwrA(double errorAngle, int maxSpeed, int minSpeed, double initError){
+double Base::findPwrA(double errorAngle, int maxSpeed, int minSpeed, double initError, bool mogo){
+  if(mogo){
+    if(radToDeg(fabs(errorAngle)) > 100){
+      return 80;
+    }
+    else if(radToDeg(fabs(errorAngle)) > 90){
+      return 127;
+    }
+    else if(radToDeg(fabs(errorAngle)) > 80){
+      return 127;
+    }
+    else if(radToDeg(fabs(errorAngle)) > 70){
+      return 127;
+    }
+    else if(radToDeg(fabs(errorAngle)) > 60){
+      return 127;
+    }
+    else if(radToDeg(fabs(errorAngle)) > 50){
+      return 20;
+    }
+    else if(radToDeg(fabs(errorAngle)) > 40){
+      return 20;
+    }
+    else if(radToDeg(fabs(errorAngle)) > 30){
+      return 20;
+    }
+    else if(radToDeg(fabs(errorAngle)) > 20){
+      return 20;
+    }
+    else if(radToDeg(fabs(errorAngle)) > 10){
+      return 20;
+    }
+    else{
+      return 20;
+    }
+  }
   double kP = 80;
   double kI = 0;
   double kD = 0;
@@ -576,7 +611,7 @@ void Base::turnToMogo(double mogoX, double mogoY, bool reverse, int minSpeed, in
     errorAngle = angleInRange(findAngle(odom.getX(), odom.getY(), targetX, targetY) - odom.getA() + (reverse ? M_PI : 0));
     errorAngle += degToRad(15)*sgn(errorAngle);
 
-    pwrA = findPwrA(errorAngle, minSpeed, maxSpeed, initError)*sgn(errorAngle);
+    pwrA = findPwrA(errorAngle, minSpeed, maxSpeed, initError, false)*sgn(errorAngle);
 
     if(fabs(errorAngle) < degToRad(15)){
       pwrA = 15*sgn(pwrA);
@@ -613,6 +648,27 @@ double Base::getActualPwrA(){
   return pwrA/3;
 }
 
+
+void Base::climb(){
+  double startX = odom.getX();
+  double startY = odom.getY();
+  double startA = odom.getA();
+
+  while(odom.getX() - startX < 2){
+    base.setDrive(-30, 0);
+  }
+  while(odom.getA() - startX < degToRad(88)){
+    base.setDrive(-30, 0);
+  }
+  while(twoBar.getAverageDistance() < 500){
+    base.setDrive(40 * sgn(500 - twoBar.getAverageDistance()), 0);
+  }
+  fourBar.setState(LiftTargets::down);
+  pros::delay(1000);
+  // while(){
+  //
+  // }
+}
 // void Base::driveToPlatform(bool red, int position){
 //
 // }

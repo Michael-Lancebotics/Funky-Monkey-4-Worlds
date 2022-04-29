@@ -15,12 +15,12 @@ private:
   double localYAlignerOffset;
   Piston piston;
   Distance distance;
-  Distance leftAlignerDistance;
-  Distance rightAlignerDistance;
   int maxGrabDistance;
   int minGrabDistance;
 
 public:
+  Distance leftAlignerDistance;
+  Distance rightAlignerDistance;
   Claw(){}
   Claw(Piston ipiston, Distance idistance, Distance ileftAlignerDistance, Distance irightAlignerDistance, double ilocalYAlignerOffset, int iminGrabDistance, int imaxGrabDistance){
     piston = ipiston;
