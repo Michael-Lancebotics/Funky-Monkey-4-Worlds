@@ -55,10 +55,12 @@ void Auton::rollerController(){
 }
 
 void Auton::programmingSkills(){
-  fourBar.setState(LiftTargets::score);
-  pros::delay(500);
-  base.climb();
-  return;
+  // twoBar.close();
+  // fourBar.claw.close();
+  // fourBar.setState(LiftTargets::score);
+  // pros::delay(2000);
+  // base.climb();
+  // return;
   // twoBar.close();
   // pros::delay(1000);
   // base.turnToPoint(0, -100, false, 20, 127, true, true, true, true);
