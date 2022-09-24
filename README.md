@@ -1,7 +1,7 @@
 # Funky-Monkey-4-Worlds
-List of all the files in "Funkey-Monkey-4" and what they contain:
-`autonomous` - Start and stop autonomous routines. As well as the autonomous routes of the robot
-`base` - Motion algorithms, velocity controllers and management functions for the robot base
+List of all the files in "Funkey-Monkey-4" and what they contain:\n
+`autonomous` - Start and stop autonomous routines. As well as the autonomous routes of the robot\n
+`base` - Motion algorithms, velocity controllers and management functions for the robot base\n
 `button` - Wrappers for the button sensor API
 'claw' - Claw control and sensor commands
 'controller' - Wrappers for the controller API
