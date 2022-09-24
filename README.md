@@ -41,3 +41,7 @@ List of all the files in "Funkey-Monkey-4" and what they contain:
 `trackingWheel` - Wrappers for the encoder API and data about trackers
 
 `util` - utility and math functions
+
+List of all the files in "Maintenance" and what they contain:
+
+`main` - UI program to help maintain by displaying information and allowing values to be tuned
