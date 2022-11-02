@@ -4,8 +4,7 @@
 class Auton{
 private:
   static void rightSide();
-  static void middleFromRight();
-  static void middleFromLeft();
+  static void middle();
   static void leftSide();
   static void winPoint();
   static void rightMiddle();
@@ -24,8 +23,8 @@ private:
 public:
   Auton(Button iselector){
     selector = iselector;
-    autons = {rightSide, leftSide, middleFromRight, middleFromLeft, winPoint, rightMiddle};
-    autonNames = {"rightSide", "leftSide", "middleFromRight", "middleFromLeft", "winPoint", "rightMiddle"};
+    autons = {rightSide, leftSide, middle, winPoint, rightMiddle};
+    autonNames = {"rightSide", "leftSide", "middle", "winPoint", "rightMiddle"};
   }
 
   void programmingSkills();

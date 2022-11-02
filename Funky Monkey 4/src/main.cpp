@@ -10,8 +10,10 @@ void initialize(){
 	// auton.select();
 	// printConsole(controller.getCompetitionSwitch());
 	auton.setAuton(0);
+	// auton.programmingSkills();
 	odom.calibrate();
 	auton.programmingSkillsSetup();
+	twoBar.open();
 }
 
 void disabled(){}
@@ -19,6 +21,8 @@ void disabled(){}
 void competition_initialize(){}
 
 void autonomous(){
+	fourBar.claw.open();
+	twoBar.open();
 	auton.programmingSkills();
 	// auton.start();
 }

@@ -143,7 +143,7 @@ void Base::driveToPoint(double itargetX, double itargetY, double maxErrorX, bool
 
   double localYVel = odom.getXVel() * sin(odom.getA()) + odom.getYVel() * cos(odom.getA());
 
-  while(((fabs(errorY) > 1 || localYVel < 20) && (fabs(errorY) > 0.5 || localYVel >= 20)) && (!controller.getPress(X) || controller.getInAutonomous()) && duration < 7000){
+  while(((fabs(errorY) > 1 || localYVel < 20) && (fabs(errorY) > 0.5 || localYVel >= 20)) && (!controller.getPress(X) || controller.getInAutonomous()) && duration < 15000){
     //update errors
     totalError = findDist(odom.getX(), odom.getY(), targetX, targetY);
 

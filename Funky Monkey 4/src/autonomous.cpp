@@ -36,8 +36,8 @@ void Auton::stop(){
 }
 
 void Auton::programmingSkillsSetup(){
-  fourBar.claw.open();
-  twoBar.open();
+  fourBar.claw.close();
+  twoBar.close();
   fourBar.setState(LiftTargets::down);
   rollers.setState(RollersState::stop);
   fourBarTask = new pros::Task(fourBarController);
@@ -55,6 +55,8 @@ void Auton::rollerController(){
 }
 
 void Auton::programmingSkills(){
+  fourBar.claw.open();
+  
   // twoBar.close();
   // fourBar.claw.close();
   // fourBar.setState(LiftTargets::score);
@@ -117,7 +119,7 @@ void Auton::programmingSkills(){
   // fourBar.move(10);
   // fourBar.setState(LiftTargets::platform);
   base.turnToAngle(180, true, 40, 127);
-  base.driveToPoint(41, 45, 1, false, 20, 70);
+  base.driveToPoint(41, 45, 1, false, 50, 90);
   fourBar.setState(LiftTargets::down);
   fourBar.claw.open();
   base.driveToMogo(41, 10, true, 41, 0, 1, true, 20, 80, true, true);
@@ -306,6 +308,7 @@ void Auton::rightSide(){
   base.driveToPoint(11, 5, 1, true, 20, 60);
   base.turnToAngle(90);
   fourBar.setState(LiftTargets::down);
+  twoBar.open();
 }
 
 void Auton::leftSide(){
@@ -314,14 +317,15 @@ void Auton::leftSide(){
   odom.reset(0, 0, 8.5);
   base.driveToMogo(sin(degToRad(8.5))*40, cos(degToRad(8.5))*40, false, sin(degToRad(8.5))*50, cos(degToRad(8.5))*50, 0.5, false, 20, 127);
   fourBar.claw.close();
-  base.driveToPoint(-6, -2, 3, true, 20, 127);
+  base.driveToPoint(-1, -2, 3, true, 20, 127);
+  base.turnToAngle(8.5, false, 30, 80);
   long start = pros::millis();
   while((pros::millis() - start) < 1200){
     base.setDrive(-80, 0);
     pros::delay(DELAY_TIME);
   }
   fourBar.setState(LiftTargets::hover);
-  base.turnToAngle(90, true, 20, 40);
+  base.turnToAngle(90, true, 30, 80);
   fourBar.setState(LiftTargets::down);
   pros::delay(100);
   base.driveToMogo(4, odom.getY(), true, 15, odom.getY(), 3, true, 20, 127);
@@ -333,11 +337,12 @@ void Auton::leftSide(){
   fourBar.setState(LiftTargets::score);
   pros::delay(1500);
   rollers.setState(RollersState::smart);
-  base.driveToPoint(-18, odom.getY(), 3, false, 20, 40);
+  base.driveToPoint(-15, odom.getY(), 3, false, 20, 40);
   base.driveToPoint(-1, odom.getY(), 3, true, 20, 80);
-  pros::delay(1000);
-  base.driveToPoint(-18, odom.getY(), 3, false, 20, 40);
-  base.driveToPoint(-1, odom.getY(), 3, true, 20, 80);
+  // pros::delay(1000);
+  // base.driveToPoint(-15, odom.getY(), 3, false, 20, 40);
+  // base.driveToPoint(-1, odom.getY(), 3, true, 20, 80);
+  twoBar.open();
 }
 
 void Auton::winPoint(){
@@ -383,6 +388,7 @@ void Auton::winPoint(){
   rollers.setState(RollersState::smart);
   base.driveToPoint(-97, odom.getY(), 3, false, 20, 40);
   base.driveToPoint(-79, odom.getY(), 3, true, 20, 80);
+  twoBar.open();
 }
 
 void Auton::rightMiddle(){
@@ -423,13 +429,35 @@ void Auton::rightMiddle(){
   base.driveToPoint(11, 5, 1, true, 20, 60);
   base.turnToAngle(90);
   fourBar.setState(LiftTargets::down);
+  twoBar.open();
   long duration = pros::millis() - start;
   printBrain(2, duration);
 }
 
-void Auton::middleFromLeft(){
-  printConsoleText("mid left");
-}
-void Auton::middleFromRight(){
+void Auton::middle(){
   printConsoleText("mid right");
+  odom.reset(0, 0, -25);
+  base.driveToMogo(45*sin(degToRad(-25)), 45*cos(degToRad(-25)), false, 55*sin(degToRad(-25)), 55*cos(degToRad(-25)), 0.5, false, 20, 127);
+  fourBar.claw.close();
+  base.driveToPoint(18*sin(degToRad(-25)), 18*cos(degToRad(-25)), 1, true, 20, 127);
+  fourBar.setState(LiftTargets::hover);
+  pros::delay(300);
+  base.turnToPoint(35, 18*cos(degToRad(-25)), true, 40, 127, true, true, true, true);
+  fourBar.setState(LiftTargets::down);
+  base.driveToMogo(25, 18*cos(degToRad(-25)), true, 35, 17, 2, true, 20, 90);
+  fourBar.setState(LiftTargets::score);
+  base.setDrive(-50, 0);
+  pros::delay(300);
+  twoBar.close();
+  pros::delay(300);
+  base.driveToPoint(15, 18*cos(degToRad(-25)), 0, false, 20, 60);
+  rollers.setState(RollersState::smart);
+  pros::delay(200);
+  base.turnToAngle(180, false, 15, 70);
+  base.driveToPoint(15, -8, 1, false, 20, 60);
+  base.driveToPoint(15, 5, 1, true, 20, 60);
+  base.turnToAngle(90);
+  fourBar.setState(LiftTargets::down);
+  twoBar.open();
+
 }

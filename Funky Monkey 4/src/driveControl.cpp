@@ -6,6 +6,7 @@ void DriveControl::start(){
   fourBarManagerTask = new pros::Task(fourBarManager);
   twoBarTask = new pros::Task(twoBarController);
   rollerTask = new pros::Task(rollerController);
+  rollerManagerTask = new pros::Task(rollerManager);
 }
 
 void DriveControl::stop(){
@@ -33,6 +34,11 @@ void DriveControl::stop(){
     rollerTask->remove();
     delete rollerTask;
     rollerTask = nullptr;
+  }
+  if(rollerManagerTask != nullptr){
+    rollerManagerTask->remove();
+    delete rollerManagerTask;
+    rollerManagerTask = nullptr;
   }
 }
 
@@ -121,6 +127,21 @@ void DriveControl::twoBarController(){
       twoBar.open();
     }
     pros::delay(DELAY_TIME);
+  }
+}
+
+void DriveControl::rollerManager(){
+  bool reverse = false;
+  while(true){
+    if(controller.getNewPress(DOWN)){
+      reverse = !reverse;
+    }
+    if(reverse){
+      rollers.setState(RollersState::reverse);
+    }
+    else{
+      rollers.setState(RollersState::smart);
+    }
   }
 }
 
