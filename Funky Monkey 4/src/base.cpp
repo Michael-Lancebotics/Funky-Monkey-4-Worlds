@@ -37,6 +37,8 @@ double Base::getVelocity(){
   return vel / 6;
 }
 
+
+// arc to a point and angle in main task
 void Base::arcToPoint(double itargetX, double itargetY, double itargetA, double maxErrorRadius, bool reverse, int iminSpeed, int imaxSpeed, bool accelerate, bool decelerate, double bw){
   targetX = itargetX;
   targetY = itargetY;
@@ -89,12 +91,7 @@ void Base::arcToPoint(double itargetX, double itargetY, double itargetA, double 
 
     errorRadius = initialRadiusToInitialCentre - radiusToInitialCentre;
 
-    // if(fabs(errorRadius) > maxErrorRadius){
-    //   radiusCorrection = sgn(errorRadius)*setMin(fabs(errorRadius) * 3, 20);
-    // }
-    // else{
-      radiusCorrection = 0;
-    // }
+    radiusCorrection = 0;
 
     printConsole(radiusCorrection);
     printConsole(centreX);
@@ -107,8 +104,6 @@ void Base::arcToPoint(double itargetX, double itargetY, double itargetA, double 
     printConsole(radToDeg(odom.getA()));
     printConsole(pwrY);
     printConsole(pwrA);
-
-    // pwrA += radiusCorrection;//*-sgn(pwrA)
 
     printConsole(pwrA);
 
@@ -181,16 +176,8 @@ void Base::driveToPoint(double itargetX, double itargetY, double maxErrorX, bool
 
     printConsole(pwrY);
     printConsole(pwrA);
-    // if(duration > 1000 && safety && odom.getYVel() == 0 && odom.getXVel() == 0 && odom.getAVel() == 0) return;
 
-    // if(pickupMOGOFourBar && fourBar.claw.hasMogo()){
-      // motorControl.fourBarGrab();
-      // pros::delay(100);
-      // break;
-    // }
-    // pwrY = 20;
     localYVel = odom.getXVel() * sin(odom.getA()) + odom.getYVel() * cos(odom.getA());
-    // printConsole(localYVel);
 
     setDrive(pwrY, pwrA);
 
@@ -201,19 +188,6 @@ void Base::driveToPoint(double itargetX, double itargetY, double maxErrorX, bool
     printConsole(duration);
     pros::delay(DELAY_TIME);
   }
-  // if(odom.getXVel() * sin(odom.getA()) + odom.getYVel() * cos(odom.getA()) > 20){
-    // while(localYVel*-boolToSgn(reverse) > 0){
-    //   localYVel = odom.getXVel() * sin(odom.getA()) + odom.getYVel() * cos(odom.getA());
-    //   setDrive(-10 * -boolToSgn(reverse), 0);
-    //   pros::delay(1);
-    // }
-  // }
-  // else{
-  //   while(fabs(errorY) > 0.5){
-  //     setDrive(30*fabs(errorY) , 0);
-  //     pros::delay(DELAY_TIME);
-  //   }
-  // }
   now = pros::millis();
   duration = now - start;
   if(decelerate){
@@ -222,7 +196,7 @@ void Base::driveToPoint(double itargetX, double itargetY, double maxErrorX, bool
   printConsole(duration);
 }
 
-//drives to point in main task
+//drives to distance at on angle in main task
 void Base::driveToDistance(double targetDistance, double itargetA, double maxErrorX, bool reverse, int minSpeed, int maxSpeed, bool accelerate, bool decelerate){//drive to point in the main task
   targetX = targetDistance*sin(itargetA);
   targetY = targetDistance*cos(itargetA);
@@ -274,14 +248,6 @@ void Base::driveToDistance(double targetDistance, double itargetA, double maxErr
     }
 
     printConsole(pwrY);
-    // if(duration > 1000 && safety && odom.getYVel() == 0 && odom.getXVel() == 0 && odom.getAVel() == 0) return;
-
-    // if(pickupMOGOFourBar && fourBar.claw.hasMogo()){
-      // motorControl.fourBarGrab();
-      // pros::delay(100);
-      // break;
-    // }
-    // pwrY = 20;
     localYVel = odom.getXVel() * sin(odom.getA()) + odom.getYVel() * cos(odom.getA());
     printConsole(localYVel);
 
@@ -292,24 +258,16 @@ void Base::driveToDistance(double targetDistance, double itargetA, double maxErr
 
     pros::delay(DELAY_TIME);
   }
-  // if(odom.getXVel() * sin(odom.getA()) + odom.getYVel() * cos(odom.getA()) > 20){
     while(localYVel > 0){
       localYVel = odom.getXVel() * sin(odom.getA()) + odom.getYVel() * cos(odom.getA());
       setDrive(-10 * -boolToSgn(reverse), 0);
       pros::delay(DELAY_TIME);
     }
-  // }
-  // else{
-  //   while(fabs(errorY) > 0.5){
-  //     setDrive(30*fabs(errorY) , 0);
-  //     pros::delay(DELAY_TIME);
-  //   }
-  // }
   setDrive(0, 0);
   printConsole(duration);
 }
 
-//drives to point in main task
+//turns to face a point in main task
 void Base::turnToPoint(double itargetX, double itargetY, bool reverse, int minSpeed, int maxSpeed, bool accelerate, bool decelerate, bool accurate, bool mogo){//drive to point in the main task
   targetX = itargetX;
   targetY = itargetY;
@@ -336,14 +294,9 @@ void Base::turnToPoint(double itargetX, double itargetY, bool reverse, int minSp
     duration = now - start;
     printConsole(duration);
 
-    // if(duration > 1000 && odom.endTarget.getSafety() && velocity.getYVelocity() == 0 && velocity.getXVelocity() == 0 && velocity.getAngleVelocity() == 0) return;
 
     pros::delay(DELAY_TIME);
   }
-  // while(odom.getAVel() * -boolToSgn(reverse) > 0){
-  //   setDrive(0,-10 * -boolToSgn(reverse));
-  //   pros::delay(DELAY_TIME);
-  // }
   //stopping the drive
   setDrive(0, 0);
   now = pros::millis();
@@ -352,7 +305,7 @@ void Base::turnToPoint(double itargetX, double itargetY, bool reverse, int minSp
 
 }
 
-//drives to point in main task
+//turns to face an angle in main task
 void Base::turnToAngle(double itargetA, bool reverse, int minSpeed, int maxSpeed, bool accelerate, bool decelerate){//drive to point in the main task
   targetA = angleInRange(degToRad(itargetA));
 
@@ -378,14 +331,9 @@ void Base::turnToAngle(double itargetA, bool reverse, int minSpeed, int maxSpeed
     duration = now - start;
     printConsole(duration);
 
-    // if(duration > 1000 && odom.endTarget.getSafety() && velocity.getYVelocity() == 0 && velocity.getXVelocity() == 0 && velocity.getAngleVelocity() == 0) return;
-
+    
     pros::delay(DELAY_TIME);
   }
-  // while(odom.getAVel() * -boolToSgn(reverse) > 0){
-  //   setDrive(0,-10 * -boolToSgn(reverse));
-  //   pros::delay(DELAY_TIME);
-  // }
   //stopping the drive
   setDrive(0, 0);
   now = pros::millis();
@@ -394,19 +342,8 @@ void Base::turnToAngle(double itargetA, bool reverse, int minSpeed, int maxSpeed
 }
 
 double Base::findPwrY(double error, double initialError, int maxSpeed, int minSpeed, bool accel, bool decel){
-  // double accelSlope = 0.0000001;
   double decelSlope = 16;
-  // if(accel && decel){
-    // return setMin(setMax(fabs(127*(tanh(error/decelSlope))-127*tanh((error-initialError)/accelSlope)-127), maxSpeed), minSpeed);
-  // }
-  // if(accel){
-    return setMin(setMax(fabs(130*(tanh(error/decelSlope))), maxSpeed), minSpeed);
-
-  // }
-  // if(decel){
-    // return setMin(setMax(fabs(-127*(tanh((error-initialError)/decelSlope))), maxSpeed), minSpeed);
-  // }
-  // return maxSpeed;
+  return setMin(setMax(fabs(130*(tanh(error/decelSlope))), maxSpeed), minSpeed);
 }
 
 double Base::findPwrA(double errorAngle, int maxSpeed, int minSpeed, double initError, bool mogo){
@@ -603,8 +540,6 @@ void Base::turnToMogo(double mogoX, double mogoY, bool reverse, int minSpeed, in
 
   double initError = radToDeg(errorAngle);
 
-  // bool left = (errorAngle > 0 && !reverse) || (errorAngle > 0 && reverse);
-
   int mogosDetected = reverse ? twoBar.mogoAligned(mogoX, mogoY) : fourBar.claw.mogoAligned(mogoX, mogoY);
 
   while(mogosDetected != 2 && (!controller.getPress(X) || controller.getInAutonomous()) && duration < 3000){
@@ -623,15 +558,10 @@ void Base::turnToMogo(double mogoX, double mogoY, bool reverse, int minSpeed, in
     duration = now - start;
     printConsole(duration);
 
-    // if(duration > 1000 && odom.endTarget.getSafety() && velocity.getYVelocity() == 0 && velocity.getXVelocity() == 0 && velocity.getAngleVelocity() == 0) return;
     mogosDetected = reverse ? twoBar.mogoAligned(mogoX, mogoY) : fourBar.claw.mogoAligned(mogoX, mogoY);
     printConsole(mogosDetected);
     pros::delay(DELAY_TIME);
   }
-  // while(odom.getAVel() * -boolToSgn(reverse) > 0){
-  //   setDrive(0,-10 * -boolToSgn(reverse));
-  //   pros::delay(DELAY_TIME);
-  // }
   //stopping the drive
   setDrive(0, 0);
   now = pros::millis();
@@ -659,17 +589,12 @@ void Base::climb(){
   setDrive(0, 0);
   fourBar.setState(LiftTargets::down);
   pros::delay(750);
-  // while(true){
-  //   printConsole(odom.inertial.getPitch());
-  //   pros::delay(DELAY_TIME);
-  // }
   while(fabs(odom.inertial.getPitch()) < 23){
     setDrive(127, 0);
   }
   while(fabs(odom.inertial.getPitch()) >= 23){
     setDrive(80, 0);
   }
-  // setDrive(-70, 0);
   setDrive(0, 0);
   pros::delay(400);
   while(fabs(odom.inertial.getPitch()) >= 23){
