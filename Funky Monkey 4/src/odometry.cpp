@@ -29,16 +29,11 @@ void Odometry::reset(double ix, double iy, double iangle){
   odom.inertial.setRotation(iangle);
   odom.setX(ix);
   odom.setY(iy);
-  // position.setX(ix);
-  // position.setY(iy);
-  // position.setAngle(iangle);
 }
 
 void Odometry::reset(double ix, double iy){
   odom.setX(ix);
   odom.setY(iy);
-  // position.setX(ix);
-  // position.setY(iy);
 }
 
 void Odometry::reset(){
@@ -46,9 +41,6 @@ void Odometry::reset(){
   odom.inertial.setRotation(0);
   odom.setX(0);
   odom.setY(0);
-  // position.setX(0);
-  // position.setY(0);
-  // position.setAngle(0);
 }
 
 void Odometry::calibrate(){
@@ -214,10 +206,6 @@ void Odometry::update(){//odometry
     //updating the global angle
 	  odom.a += deltaTheta;
 
-    // position.setX(odom.x);
-    // position.setY(odom.y);
-    // position.setAngle(odom.a);
-
     if(pros::millis() >= lastCheck + 40){
       odom.velX = ((odom.x - lastX) * 1000) / (pros::millis() - lastCheck);
       odom.velY = ((odom.y - lastY) * 1000) / (pros::millis() - lastCheck);
@@ -227,11 +215,6 @@ void Odometry::update(){//odometry
       lastAngle = odom.a;
       lastCheck = pros::millis();
     }
-
-    // velocity.setvelX(odom.velX);
-    // velocity.setvelY(odom.velY);
-    // velocity.setvelA(odom.velA);
-
     pros::lcd::clear_line(1);
     pros::lcd::print(1, "x: %.2f y: %.2f, a: %.2f", odom.x, odom.y, radToDeg(odom.a));
 	  pros::delay(DELAY_TIME);
