@@ -30,7 +30,6 @@ void Rollers::run(){
       case RollersState::smart:
       if(twoBar.getState() == PistonState::extend && twoBar.hasMogo() && fourBar.getState() != LiftTargets::down){//FourBarRotation.get_position() > -20400 &&
         if(!wasRunning){
-          // pros::delay(500);
           wasRunning = true;
         }
         rollers.move(127);
