@@ -34,8 +34,6 @@ void Inertial::filter(){
 }
 
 void Inertial::calibrate(){
-  // printConsoleText("started");
-
   if(filterTask != nullptr){
     filterTask->remove();
     delete filterTask;
